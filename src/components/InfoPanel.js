@@ -38,6 +38,9 @@ const InfoPanel = ({photoData, onClose}) => {
                     />
                 </div>
                 <div className={style.NER} dangerouslySetInnerHTML={{__html: encodeNER(photoData['description_geocoded'])}}></div>
+                <div className={style.Link}>
+                    <a href={`https://fortepan.hu/hu/photos/?id=${photoData['fortepan_id']}`} target={'_new'}>Fortepan azonosító: {photoData['fortepan_id']}</a>
+                </div>
                 <Table striped bordered hover size="sm">
                     <thead>
                     <tr>

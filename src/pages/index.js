@@ -1,18 +1,23 @@
 import Head from "next/head";
 import {Nunito_Sans} from "next/font/google";
-import {Col, Container, Row, Table} from "react-bootstrap";
 import style from "./index.module.scss";
 
-const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+
 import {useState} from "react";
-import GalleryItem from "@/components/GalleryItem";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
 import clientFetcher from "@/utils/clientFetcher";
 import {PaginationControl} from "react-bootstrap-pagination-control";
+import BootstrapTable from 'react-bootstrap-table-next';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
 import 'react-modern-drawer/dist/index.css'
 import InfoPanel from "@/components/InfoPanel";
+import GalleryItem from "@/components/GalleryItem";
+
+const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
 
 const MapComponent = dynamic(
     () => import('../components/MapComponent'),
@@ -23,31 +28,80 @@ const LIMIT = 50;
 
 export default function Home() {
     const [page, setPage] = useState(1)
-    const {data} = useSWR(['photos', page], ([url, page]) => clientFetcher(url, {offset: (page - 1) * LIMIT, limit: LIMIT}))
+    const [search, setSearch] = useState('')
+    const [locationsCount, setLocationsCount] = useState('')
+
+    const {data} = useSWR(['photos', page, search, locationsCount], ([url, page, search, locationsCount]) => clientFetcher(url, {
+        offset: (page - 1) * LIMIT,
+        limit: LIMIT,
+        search: search,
+        locations_count: locationsCount
+    }))
 
     const [selectedPhoto, setSelectedPhoto] = useState(undefined)
-    const [selectedPhotoData, setSelectedPhotoData] = useState({})
-
     const selectedPhotoCall = useSWR(selectedPhoto ? `photos/${selectedPhoto}` : undefined, clientFetcher)
 
     const handleSelect = (photoData) => {
         setSelectedPhoto(photoData['id'])
-        setSelectedPhotoData(photoData)
     }
 
-    const renderPhotos = (d) => {
-        return d['results'].map((photo, idx) => {
+    const columns = [{
+        dataField: 'id',
+        text: 'Fénykép',
+        formatter: (cell, row, rowIndex) => {
             return (
-                <tr key={`photo_${idx}`} className={style.TableRow}>
-                    <td style={{verticalAlign: "middle", textAlign: "center"}}>
-                        <GalleryItem key={idx} photoData={photo} selectedPhoto={selectedPhoto} onSelect={handleSelect}/>
-                    </td>
-                    <td style={{verticalAlign: "middle"}}>{photo['description_original']}</td>
-                    <td style={{verticalAlign: "middle", textAlign: "center"}}>{photo['place_count']}</td>
-                </tr>
+                <div style={{textAlign: 'center'}}>
+                    <GalleryItem key={cell} photoData={row} selectedPhoto={selectedPhoto} onSelect={handleSelect}/>
+                </div>
             )
+        },
+        classes: style.TableColumn,
+        style: {width: '40%'}
+    }, {
+        dataField: 'description_original',
+        text: 'Leírás',
+        filter: textFilter({
+            placeholder: 'Keresés...',
+            defaultValue: search
+        }),
+        formatter: (cell, row, rowIndex) => {
+            return (
+                <div style={{textAlign: 'left'}}>
+                    {row['description_original']}<br/><br/>
+                    <div className={style.Data}>
+                        {row['place'] && `${row['place']}`}
+                        {row['year'] && ` | ${row['year']}`}
+                        {row['fortepan_id'] && ` | Fénykép: ${row['fortepan_id']}`}
+                    </div>
+                </div>
+            )
+        },
+        classes: style.TableColumn
+    }, {
+        dataField: 'locations_count',
+        text: 'Geokódok száma',
+        filter: textFilter({
+            placeholder: 'Szűrés...',
+            defaultValue: locationsCount
+        }),
+        classes: style.TableColumn,
+        style: {width: '100px'}
+    }];
 
-        })
+    const onTableChange = (type, { filters,  sortField, sortOrder }) => {
+        if (filters.hasOwnProperty('description_original')) {
+            setSearch(filters['description_original']['filterVal'])
+        } else {
+            setSearch('')
+        }
+
+        if (filters.hasOwnProperty('locations_count')) {
+            setLocationsCount(filters['locations_count']['filterVal'])
+        } else {
+            setLocationsCount('')
+        }
+
+        setPage(1)
     }
 
     return (
@@ -78,18 +132,23 @@ export default function Home() {
                                 </div>
                             :
                                 <div style={{marginBottom: '90px'}}>
-                                    <Table striped bordered hover size="sm">
-                                        <thead className={style.TableHead}>
-                                        <tr>
-                                            <th style={{width: '30%'}}>Fénykép</th>
-                                            <th>Leírás</th>
-                                            <th style={{width: '10%'}}>Geotagek</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {data && renderPhotos(data)}
-                                        </tbody>
-                                    </Table>
+                                    {
+                                        <BootstrapTable
+                                            keyField='table'
+                                            headerWrapperClasses={style.HeaderWrapper}
+                                            headerClasses={style.HeaderRow}
+                                            bootstrap4
+                                            data={ data ? data['results'] : [] }
+                                            columns={ columns }
+                                            remote={ { filter: true, sort: true } }
+                                            filter={ filterFactory() }
+                                            striped
+                                            hover
+                                            condensed
+                                            loading={ true }
+                                            onTableChange={ onTableChange }
+                                        />
+                                    }
                                 </div>
                         }
                     </div>

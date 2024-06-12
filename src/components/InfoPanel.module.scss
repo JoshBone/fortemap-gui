@@ -3,6 +3,14 @@
   z-index: 1;
   overflow: auto;
 
+  .Link {
+    padding: 15px;
+
+    a {
+      font-weight: 600;
+    }
+  }
+
   .NER {
     padding: 15px;
     background-color: #F8F8F8;
