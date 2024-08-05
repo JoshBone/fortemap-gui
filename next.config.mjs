@@ -43,13 +43,13 @@ const nextConfig = {
     "rc-util",
   ],
   images: {
-    domains: ['fortepan.download'],
+    domains: ['fortepan.download']
   },
   output: 'standalone',
   assetPrefix: isProd ? 'https://fmt.nektonik.com/fortemap' : undefined,
   experimental: {
-    esmExternals: "loose",
-  },
+    esmExternals: "loose"
+  }
 };
 
 export default nextConfig;
