@@ -18,7 +18,7 @@ RUN \
 
 COPY src ./src
 COPY public ./public
-COPY next.config.js .
+COPY next.config.mjs .
 COPY jsconfig.json .
 
 # Environment variables must be present at build time
@@ -51,7 +51,7 @@ RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/jsconfig.json ./
 
 # Automatically leverage output traces to reduce image size
