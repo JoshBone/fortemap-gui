@@ -50,6 +50,7 @@ const nextConfig = {
   experimental: {
     esmExternals: "loose",
   },
+  basePath: isProd ? '/fortemap' : ''
 };
 
 export default nextConfig;
