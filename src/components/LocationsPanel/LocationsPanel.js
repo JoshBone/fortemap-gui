@@ -1,4 +1,4 @@
-import {Button, Table} from "antd";
+import {Button, Table, Tag} from "antd";
 import style from "./LocationsPanel.module.scss";
 import { HiPlus, HiCheck, HiOutlineLocationMarker, HiOutlineTrash } from "react-icons/hi";
 import { Tooltip } from "antd";
@@ -20,6 +20,10 @@ const LocationsPanel = ({locationsData, onRowClick}) => {
         )
     }
 
+    const renderStatus = (record) => {
+        return <Tag color="volcano">Nem ellenőrzött</Tag>
+    }
+
     const columns = [
         {
             title: 'Eredeti cím',
@@ -28,6 +32,11 @@ const LocationsPanel = ({locationsData, onRowClick}) => {
         {
             title: 'Geokódolt cím',
             dataIndex: 'geocoded_address',
+        },
+        {
+            title: 'Státusz',
+            width: 120,
+            render: renderStatus
         },
         {
             title: 'Akció',

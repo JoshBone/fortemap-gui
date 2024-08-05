@@ -89,7 +89,7 @@ const MapComponent = ({photoData, selectedLocation}) => {
             <MapContainer
                 className={style.MapContainer}
                 center={position}
-                zoom={14}
+                zoom={15}
                 scrollWheelZoom={true}
             >
                 <ChangeView center={position} />
