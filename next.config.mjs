@@ -49,7 +49,7 @@ const nextConfig = {
   assetPrefix: isProd ? 'https://fmt.nektonik.com/fortemap' : undefined,
   experimental: {
     esmExternals: "loose",
-  }
+  },
 };
 
 export default nextConfig;
