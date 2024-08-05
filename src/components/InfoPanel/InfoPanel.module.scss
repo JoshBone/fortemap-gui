@@ -1,0 +1,54 @@
+.InfoPanelWrapper {
+  padding: 10px;
+  overflow: auto;
+
+  .Image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #DDD;
+  }
+
+  .PhotoMeta {
+    padding: 15px 15px 5px 15px;
+    line-height: 140%;
+
+    .Label {
+      font-weight: 800;
+    }
+
+    .NER {
+      flex: 1;
+      align-self: center;
+
+      :global .LOC {
+        padding: 0 2px;
+        background-color: #F73E12;
+        color: #FFF;
+        border-radius: 5px;
+      }
+    }
+
+    .Link {
+      a {
+        font-weight: 600;
+      }
+    }
+
+    .StatusButtons {
+      :global .ant-radio-button-wrapper-checked:nth-child(2) {
+        background-color: #ffea00;
+        border-color: #ffea00;
+        color: black;
+      }
+
+      :global .ant-radio-button-wrapper-checked:nth-child(3) {
+        background-color: #44be24;
+        border-color: #44be24;
+        color: black;
+      }
+    }
+  }
+
+}

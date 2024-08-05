@@ -1,8 +1,10 @@
 .MapWrapper {
-  z-index: 9999;
+  position: sticky;
+  top: 50px;
+  z-index: 9;
 
   .MapContainer {
-    height: calc(100vh - 120px);
+    height: calc(100vh - 50px);
 
     :global .leaflet-popup-content {
       font-size: 16px;

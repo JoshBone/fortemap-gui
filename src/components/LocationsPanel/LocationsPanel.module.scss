@@ -1,0 +1,14 @@
+.LocationsWrapper {
+  margin-top: 25px;
+
+  .Label {
+    font-weight: 800;
+    padding-bottom: 10px;
+  }
+
+  .Actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+  }
+}

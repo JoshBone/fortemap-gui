@@ -1,0 +1,23 @@
+.LayoutWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  .Header {
+    position: fixed;
+    width: 100%;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    background-color: #EEE;
+    z-index: 10;
+  }
+
+  .Content {
+    margin-top: 50px;
+    flex: 1;
+    max-height: calc(100% - 50px);
+  }
+}
