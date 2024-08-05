@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [
@@ -39,6 +42,11 @@ const nextConfig = {
     "rc-upload",
     "rc-util",
   ],
+  images: {
+    domains: ['fortepan.download'],
+  },
+  output: 'standalone',
+  assetPrefix: isProd ? 'https://fmt.nektonik.com/fortemap' : undefined,
   experimental: {
     esmExternals: "loose",
   },
