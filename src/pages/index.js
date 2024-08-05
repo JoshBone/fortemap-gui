@@ -9,6 +9,8 @@ import style from "./index.module.scss";
 
 const { Search } = Input;
 
+const isProd = process.env.NODE_ENV === 'production'
+
 export default function Start() {
     const router = useRouter()
     const {page, limit, query} = router.query
@@ -162,7 +164,7 @@ export default function Start() {
                   onRow={(record, rowIndex) => {
                       return {
                           onClick: (event) => {
-                              router.push(`/photo/${record['fortepan_id']}`)
+                              router.push(`${isProd ? '/fortemap/' : ''}/photo/${record['fortepan_id']}`)
                           } // click row
                       };
                   }}
