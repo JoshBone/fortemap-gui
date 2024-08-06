@@ -5,7 +5,7 @@ export const addQueryParam = (param, value, router) => {
     query[param] = value
     const params = new URLSearchParams(query);
     router.replace(
-        { pathname: `${isProd ? '/fortemap/' : ''}pathname`, query: params.toString() },
+        { pathname: isProd ? `/fortemap/${pathname}` : pathname, query: params.toString() },
         undefined,
         { shallow: false }
     );
@@ -18,7 +18,7 @@ export const removeQueryParam = (param, router) => {
     const params = new URLSearchParams(query);
     params.delete(param);
     router.replace(
-        { pathname: `${isProd ? '/fortemap/' : ''}pathname`, query: params.toString() },
+        { pathname: isProd ? `/fortemap/${pathname}` : pathname, query: params.toString() },
         undefined,
         { shallow: false }
     );
