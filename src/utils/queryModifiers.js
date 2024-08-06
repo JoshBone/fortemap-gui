@@ -7,7 +7,7 @@ export const addQueryParam = (param, value, router) => {
     router.replace(
         { pathname: isProd ? `/fortemap/${pathname}` : pathname, query: params.toString() },
         undefined,
-        { shallow: false }
+        { shallow: true }
     );
 };
 
@@ -20,6 +20,6 @@ export const removeQueryParam = (param, router) => {
     router.replace(
         { pathname: isProd ? `/fortemap/${pathname}` : pathname, query: params.toString() },
         undefined,
-        { shallow: false }
+        { shallow: true }
     );
 };
