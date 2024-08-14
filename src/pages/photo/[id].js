@@ -13,7 +13,7 @@ const MapComponent = dynamic(
 
 export async function getServerSideProps(context) {
     const { id } = context.params;
-    const res = await fetch(`${FORTEPAN_API}/photos/${id}`)
+    const res = await fetch(`${FORTEPAN_API}/photos/${id}/`)
 
     if (!res.ok) {
         return {
