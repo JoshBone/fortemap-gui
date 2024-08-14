@@ -1,12 +1,12 @@
 import useSWR from "swr";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import clientFetcher from "@/utils/clientFetcher";
 import {useEffect, useState} from "react";
 import {Input, Select, Table, Tag} from "antd";
 import {addQueryParam, removeQueryParam} from "@/utils/queryModifiers";
 
 import style from "./photos.module.scss";
-import {useEffectOnce, usePrevious} from "react-use";
+import {useDeepCompareEffect, useEffectOnce, usePrevious} from "react-use";
 import Head from "next/head";
 
 const { Search } = Input;
@@ -43,30 +43,15 @@ export default function Photos() {
     const [data, setData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
-    /*
-    const { data, isLoading } = useSWR(['photos', pagination, filterStatus, filterPlace, filterGeocodes, search],
-        ([url, pagination, filterStatus, filterPlace, filterGeocodes, search]) => {
-
-        const params = {
-            offset: (pagination.current-1) * pagination.pageSize,
-            limit: pagination.pageSize,
-            search: search,
-            status: filterStatus ? filterStatus : '',
-            place: filterPlace ? filterPlace : '',
-            locations_count: filterGeocodes ? filterGeocodes : ''
-        }
-
-        return clientFetcher(url, params)
-    })
-    */
-
     useEffect(() => {
+        if (!router.isReady) return;
+
         setIsLoading(true);
         let resetPage = false;
 
         if (filterGeocodes !== prevFilterGeocodes) {
             resetPage = true
-            addQueryParam('page', 1, router)
+            filterGeocodes && addQueryParam('page', 1, router)
 
             if (filterGeocodes) {
                 addQueryParam('geocodes', filterGeocodes, router)
@@ -77,7 +62,7 @@ export default function Photos() {
 
         if (filterPlace !== prevFilterPlace) {
             resetPage = true
-            addQueryParam('page', 1, router)
+            filterPlace && addQueryParam('page', 1, router)
 
             if (filterPlace) {
                 addQueryParam('place', filterPlace, router)
@@ -88,7 +73,7 @@ export default function Photos() {
 
         if (filterStatus !== prevFilterStatus) {
             resetPage = true
-            addQueryParam('page', 1, router)
+            filterStatus && addQueryParam('page', 1, router)
 
             if (filterStatus) {
                 addQueryParam('status', filterStatus, router)
@@ -99,17 +84,18 @@ export default function Photos() {
 
         if (search !== prevSearch) {
             resetPage = true
-            addQueryParam('page', 1, router)
+            search && addQueryParam('page', 1, router)
         }
 
         const params = {
             offset: resetPage ? 0 : (pagination.current - 1) * pagination.pageSize,
             limit: pagination.pageSize,
-            search: search,
+            search: search ? search : '',
             status: filterStatus ? filterStatus : '',
             place: filterPlace ? filterPlace : '',
             locations_count: filterGeocodes ? filterGeocodes : ''
         }
+
         clientFetcher('photos', params).then(
             ({results, count}) => {
                 setData(results);
@@ -129,6 +115,21 @@ export default function Photos() {
         filterStatus,
         query
     ])
+
+    useEffect(() => {
+        if (!router.isReady) return;
+
+        setFilterPlace(place)
+
+        setSearchGeocodesValue(geocodes)
+        setFilterGeocodes(geocodes)
+
+        setFilterStatus(status)
+
+        setSearchInputValue(query)
+        setSearch(query)
+
+    }, [router.isReady])
 
     const photoRender = (photo) => {
         const url = `https://fortepan.download/file/fortepan-eu/480/fortepan_${photo}.jpg`

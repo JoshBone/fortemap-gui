@@ -5,6 +5,7 @@ export default function MyDocument() {
   return (
     <Html lang="en">
         <Head>
+            <link rel="icon" type="image/x-icon" href="favicon.ico" />
             <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
             <link rel="stylesheet" href="https://unpkg.com/react-leaflet-markercluster/dist/styles.min.css"/>
         </Head>
