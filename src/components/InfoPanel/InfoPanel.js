@@ -1,19 +1,17 @@
 import style from "./InfoPanel.module.scss"
-import {Col, Row, Image, Button, Radio} from "antd";
+import {Col, Row, Image, Button, Radio, Space} from "antd";
 import React, {useState} from "react";
 import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
+import {useRouter} from "next/router";
+
+import {HiOutlineArrowLeft} from 'react-icons/hi'
 
 const InfoPanel = ({photoData, onLocationSelect}) => {
-    const [photoStatus, setPhotoStatus] = useState(1)
+    const router = useRouter()
+    const [photoStatus, setPhotoStatus] = useState('ELL_VAR')
 
     const previewURL = `https://fortepan.download/file/fortepan-eu/1600/fortepan_${photoData['fortepan_id']}.jpg`
     const url = `https://fortepan.download/file/fortepan-eu/480/fortepan_${photoData['fortepan_id']}.jpg`
-
-    const statusOptions = [
-        {value: 1, label: 'Friss'},
-        {value: 2, label: 'Több info kell'},
-        {value: 3, label: 'Kész'}
-    ]
 
     const encodeNER = (nerText) => {
         let txt = nerText;
@@ -54,16 +52,21 @@ const InfoPanel = ({photoData, onLocationSelect}) => {
                     <div className={style.PhotoMeta}>
                         <div className={style.Label}>Státusz:</div>
                         <Radio.Group
-                            options={statusOptions}
+                            buttonStyle={'outline'}
                             value={photoStatus}
                             onChange={(e) => setPhotoStatus(e.target.value)}
-                            optionType={'button'}
-                            buttonStyle={'solid'}
                             className={style.StatusButtons}
-                        />
+                        >
+                            <Space direction="vertical">
+                                <Radio value={'ELL_VAR'}>Ellenőrzésre vár</Radio>
+                                <Radio value={'ELH_VAR'}>Elhelyezésre vár</Radio>
+                                <Radio value={'OK'}>Elhelyezve</Radio>
+                                <Radio value={'NK'}>Nincs koordináta</Radio>
+                            </Space>
+                        </Radio.Group>
                     </div>
-                    <div className={style.PhotoMeta} style={{paddingTop: '25px'}}>
-                        <Button onClick={() => history.back()}>Vissza</Button>
+                    <div className={style.Buttons} style={{paddingTop: '25px'}}>
+                        <Button onClick={() => history.back()}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
                     </div>
                 </Col>
             </Row>

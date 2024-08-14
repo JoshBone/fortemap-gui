@@ -10,6 +10,12 @@
     background-color: #DDD;
   }
 
+  .Buttons {
+    padding: 15px 15px 0 15px;
+    display: flex;
+    gap: 10px;
+  }
+
   .PhotoMeta {
     padding: 15px 15px 5px 15px;
     line-height: 140%;
@@ -37,15 +43,21 @@
     }
 
     .StatusButtons {
-      :global .ant-radio-button-wrapper-checked:nth-child(2) {
-        background-color: #ffea00;
-        border-color: #ffea00;
+      :global .ant-space-item:nth-child(2) .ant-radio-checked .ant-radio-inner {
+        background-color: #F4D03F;
+        border-color: #F4D03F;
         color: black;
       }
 
-      :global .ant-radio-button-wrapper-checked:nth-child(3) {
-        background-color: #44be24;
-        border-color: #44be24;
+      :global .ant-space-item:nth-child(3) .ant-radio-checked .ant-radio-inner {
+        border-color: #1ABC9C;
+        background-color: #1ABC9C;
+        color: black;
+      }
+
+      :global .ant-space-item:nth-child(4) .ant-radio-checked .ant-radio-inner {
+        border-color: #000;
+        background-color: #000;
         color: black;
       }
     }

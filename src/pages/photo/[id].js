@@ -13,7 +13,7 @@ const MapComponent = dynamic(
 
 export async function getServerSideProps(context) {
     const { id } = context.params;
-    const res = await fetch(`${FORTEPAN_API}/photos/${id}/`)
+    const res = await fetch(`${FORTEPAN_API}/photos/${id}`)
 
     if (!res.ok) {
         return {
@@ -38,7 +38,7 @@ export default function PhotoPage({data}) {
     return (
         <React.Fragment>
             <Head>
-                <title>Fortemap Tagger - Photo ID: {data['fortepan_id']}</title>
+                <title>Fortemap Geotagger - Photo ID: {data['fortepan_id']}</title>
             </Head>
             <Row>
                 <Col span={14}><InfoPanel photoData={data} onLocationSelect={handleLocationSelect} /></Col>
