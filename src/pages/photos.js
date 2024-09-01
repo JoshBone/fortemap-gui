@@ -1,12 +1,10 @@
-import useSWR from "swr";
 import { useRouter } from "next/router";
-import clientFetcher from "@/utils/clientFetcher";
 import {useEffect, useState} from "react";
 import {Input, Select, Table, Tag} from "antd";
 import {addQueryParam, removeQueryParam} from "@/utils/queryModifiers";
+import qs from 'query-string';
 
 import style from "./photos.module.scss";
-import {useDeepCompareEffect, useEffectOnce, usePrevious} from "react-use";
 import Head from "next/head";
 
 const { Search } = Input;
@@ -14,122 +12,70 @@ const { Search } = Input;
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 export default function Photos() {
-    const router = useRouter()
-    const {page, limit, query, geocodes, status, place} = router.query
+    const router = useRouter();
+    const { query } = router;
 
-    const getInitialPagination = () => {
-        const p = {}
-        p['current'] = page ? Number(page) : 1;
-        p['pageSize'] = limit ? Number(limit) : 50
-        return p
-    }
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const [pagination, setPagination] = useState(getInitialPagination)
-
-    const [filterStatus, setFilterStatus] = useState(status)
-    const prevFilterStatus = usePrevious(filterStatus);
-
-    const [filterPlace, setFilterPlace] = useState(place)
-    const prevFilterPlace = usePrevious(filterPlace);
-
-    const [searchGeocodesValue, setSearchGeocodesValue] = useState(geocodes)
-    const [filterGeocodes, setFilterGeocodes] = useState(geocodes)
-    const prevFilterGeocodes = usePrevious(filterGeocodes);
-
-    const [searchInputValue, setSearchInputValue] = useState('')
-    const [search, setSearch] = useState('')
-    const prevSearch = usePrevious(search);
-
-    const [data, setData] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [pagination, setPagination] = useState({
+        current: parseInt(query.page),
+        pageSize: parseInt(query.limit),
+        total: 0,
+    });
+    const [filters, setFilters] = useState({
+        place: query.filter_place,
+        status: query.filter_status,
+        geocodes: query.filter_locations_count,
+    });
+    const [search, setSearch] = useState(query.search);
 
     useEffect(() => {
-        if (!router.isReady) return;
-
-        setIsLoading(true);
-        let resetPage = false;
-
-        if (filterGeocodes !== prevFilterGeocodes) {
-            resetPage = true
-            filterGeocodes && addQueryParam('page', 1, router)
-
-            if (filterGeocodes) {
-                addQueryParam('geocodes', filterGeocodes, router)
-            } else {
-                removeQueryParam('geocodes', router)
+        const parsedFilters = {};
+        Object.keys(query).forEach((key) => {
+            if (key.startsWith('filter_')) {
+                parsedFilters[key.replace('filter_', '')] = query[key];
             }
+        });
+        setFilters(parsedFilters);
+
+        fetchData({
+            search: query.search,
+            pagination: {
+                current: parseInt(query.page || 1),
+                pageSize: parseInt(query.limit || 50),
+            },
+            filters: parsedFilters,
+        });
+    }, [query]);
+
+    const fetchData = async (params = {}) => {
+        setLoading(true);
+
+        try {
+            const queryString = qs.stringify({
+                search: search,
+                offset: (params.pagination.current - 1) * params.pagination.pageSize,
+                limit: params.pagination.pageSize,
+                ...Object.keys(params.filters).reduce((acc, key) => {
+                    acc[key] = params.filters[key];
+                    return acc;
+                }, {}),
+            });
+
+            const response = await fetch(`${FORTEPAN_API}/photos/?${queryString}`).then(r => r.json());
+
+            setData(response.results);
+            setPagination({
+                ...params.pagination,
+                total: response.count,
+            });
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        } finally {
+            setLoading(false);
         }
-
-        if (filterPlace !== prevFilterPlace) {
-            resetPage = true
-            filterPlace && addQueryParam('page', 1, router)
-
-            if (filterPlace) {
-                addQueryParam('place', filterPlace, router)
-            } else {
-                removeQueryParam('place', router)
-            }
-        }
-
-        if (filterStatus !== prevFilterStatus) {
-            resetPage = true
-            filterStatus && addQueryParam('page', 1, router)
-
-            if (filterStatus) {
-                addQueryParam('status', filterStatus, router)
-            } else {
-                removeQueryParam('status', router)
-            }
-        }
-
-        if (search !== prevSearch) {
-            resetPage = true
-            search && addQueryParam('page', 1, router)
-        }
-
-        const params = {
-            offset: resetPage ? 0 : (pagination.current - 1) * pagination.pageSize,
-            limit: pagination.pageSize,
-            search: search ? search : '',
-            status: filterStatus ? filterStatus : '',
-            place: filterPlace ? filterPlace : '',
-            locations_count: filterGeocodes ? filterGeocodes : ''
-        }
-
-        clientFetcher('photos', params).then(
-            ({results, count}) => {
-                setData(results);
-                setIsLoading(false);
-                setPagination({
-                    ...pagination,
-                    current: resetPage ? 1 : pagination.current,
-                    total: count
-                })
-            }
-        )
-    }, [
-        pagination.current,
-        pagination.pageSize,
-        filterGeocodes,
-        filterPlace,
-        filterStatus,
-        query
-    ])
-
-    useEffect(() => {
-        if (!router.isReady) return;
-
-        setFilterPlace(place)
-
-        setSearchGeocodesValue(geocodes)
-        setFilterGeocodes(geocodes)
-
-        setFilterStatus(status)
-
-        setSearchInputValue(query)
-        setSearch(query)
-
-    }, [router.isReady])
+    };
 
     const photoRender = (photo) => {
         const url = `https://fortepan.download/file/fortepan-eu/480/fortepan_${photo}.jpg`
@@ -193,6 +139,7 @@ export default function Photos() {
         {
             title: 'Geokódok',
             dataIndex: 'locations_count',
+            // sorter: true,
             render: (count) => (<div style={{textAlign: 'center'}}>{count}</div>),
             width: 120
         },
@@ -204,29 +151,15 @@ export default function Photos() {
         },
     ];
 
-    const onStatusChange = (value) => {
-        setFilterStatus(value)
-    }
-
-    const onPlaceChange = (value) => {
-        setFilterPlace(value)
-    }
-
-    const onGeocodeSearch = (value) => {
-        setFilterGeocodes(value)
-    }
-
-
     const renderTableHeader = () => {
         return (
             <div className={style.TableHeader}>
                 <div className={style.Search}>
                     <Search
-                        defaultValue={query}
                         allowClear={true}
                         placeholder="Keresés..."
-                        value={searchInputValue}
-                        onChange={(e) => setSearchInputValue(e.target.value)}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                         onSearch={handleSearch}
                     />
                 </div>
@@ -236,8 +169,8 @@ export default function Photos() {
                         allowClear
                         placeholder="- Szűrés státusz szerint -"
                         optionFilterProp="label"
-                        value={filterStatus}
-                        onChange={onStatusChange}
+                        value={filters['status']}
+                        onChange={(value) => onFilterChange('status', value)}
                         style={{width: '230px'}}
                         options={[
                             { label: 'Ellenőrzésre vár', value: 'ELL_VAR' },
@@ -251,8 +184,8 @@ export default function Photos() {
                         allowClear
                         placeholder="- Szűrés település szerint -"
                         optionFilterProp="label"
-                        value={filterPlace}
-                        onChange={onPlaceChange}
+                        value={filters['place']}
+                        onChange={(value) => onFilterChange('place', value)}
                         style={{width: '250px'}}
                         options={[
                             { label: 'Budapest', value: 'Budapest' },
@@ -260,37 +193,84 @@ export default function Photos() {
                         ]}
                     />
                     <Search
-                        defaultValue={filterGeocodes}
                         allowClear={true}
                         placeholder="Geokódok száma"
-                        value={searchGeocodesValue}
-                        onChange={(e) => {setSearchGeocodesValue(e.target.value)}}
+                        value={filters['locations_count']}
+                        // onChange={(e) => {setFilters({...filters, geocodes: e.target.value})}}
                         style={{width: '200px'}}
-                        onSearch={onGeocodeSearch}
-                />
+                        onSearch={(value) => onFilterChange('locations_count', value)}
+                    />
                 </div>
             </div>
         )
     }
 
-    const handleSearch = (query) => {
-        setSearch(query)
-
-        if (query !== '') {
-            addQueryParam('query', query, router)
+    const onFilterChange = (filter, value) => {
+        if (value) {
+            setFilters({
+                ...filters,
+                [filter]: value,
+            });
+            handleTableChange(pagination, {
+                ...filters,
+                [filter]: value,
+            });
         } else {
-            removeQueryParam('query', router)
+            setFilters({
+                ...filters,
+                [filter]: undefined,
+            });
+            handleTableChange(pagination, {
+                ...filters,
+                [filter]: undefined,
+            });
         }
     }
 
-    const handleTableChange = (pagination, filters, sorter, extra) => {
-        switch (extra['action']) {
-            case 'paginate':
-                setPagination(pagination);
-                addQueryParam('page', pagination.current, router)
-                addQueryParam('limit', pagination.pageSize, router)
-                break;
+    const handleSearch = (query) => {
+        if (query && query !== '') {
+            const newPagination = {
+                current: 1,
+                pageSize: pagination.pageSize,
+            }
+            handleTableChange(newPagination, filters)
+        } else {
+            handleTableChange(pagination, filters)
         }
+    }
+
+    const handleTableChange = (pagination, filters, sorter) => {
+        const filterParams = {};
+        Object.keys(filters).forEach((key) => {
+            if (filters[key]) {
+                filterParams[`filter_${key}`] = filters[key];
+            }
+        });
+
+        const params = {
+            page: pagination.current,
+            limit: pagination.pageSize,
+            ...filterParams,
+        };
+
+        /*
+        if (sorter.order) {
+            params['ordering'] = sorter.order === 'ascend' ? sorter.field : `-${sorter.field}`
+        }
+        */
+
+        if (search) {
+            params['search'] = search;
+        }
+
+        const queryString = qs.stringify(params);
+        router.push(`?${queryString}`, undefined, { shallow: true });
+
+        fetchData({
+            pagination,
+            filters,
+            search: search,
+        });
     };
 
     return (
@@ -303,7 +283,7 @@ export default function Photos() {
                   rowKey={'fortepan_id'}
                   columns={columns}
                   dataSource={data}
-                  loading={isLoading}
+                  loading={loading}
                   pagination={pagination}
                   title={renderTableHeader}
                   bordered
@@ -317,7 +297,8 @@ export default function Photos() {
                   scroll={{
                       y: '72vh',
                   }}
-                  onChange={handleTableChange}
+                  onChange={(pagination, filterValues, sorter) =>
+                      handleTableChange(pagination, filters, sorter)}
                   size="small"
               />
           </div>
