@@ -1,6 +1,7 @@
 import {MapContainer, Marker, Popup, TileLayer, useMap} from "react-leaflet";
 import style from "./MapComponent.module.scss";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
+import DraggableMarker from "@/components/MapComponent/DraggableMarker";
 
 const ChangeView = ({ center, zoom }) => {
     const map = useMap();
@@ -8,11 +9,10 @@ const ChangeView = ({ center, zoom }) => {
     return null;
 }
 
-const MapComponent = ({photoData, selectedLocation}) => {
-    const mapRef = useRef(null)
-    const markerRef = useRef(null)
-
+const MapComponent = ({photoData, selectedLocation, editing}) => {
     const [position, setPosition] = useState([47.4983, 19.0408])
+
+    const [locations, setLocations] = useState(photoData['locations'])
 
     const redIcon = new L.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -61,24 +61,34 @@ const MapComponent = ({photoData, selectedLocation}) => {
         return (p['latitude'] === selectedLocation['latitude'] && p['longitude'] === selectedLocation['longitude'])
     }
 
+    const onMarkerUpdate = (id, points) => {
+
+    }
+
     const renderMarkers = () => {
         const {locations} = photoData;
         if (locations) {
             return locations.map((p, idx) => {
                 if (p['latitude'] && p['longitude']) {
-                    return (
-                        <Marker
-                            ref={detectEqual(p) ? markerRef : undefined}
-                            icon={getIcon(p)}
-                            key={idx}
-                            opacity={detectEqual(p) ? 1 : 0.7}
-                            position={[p['latitude'], p['longitude']]}
-                        >
-                            <Popup>
-                                {p['geocoded_address']}
-                            </Popup>
-                        </Marker>
-                    )
+                    if (detectEqual(p) && editing) {
+                        return (
+                            <DraggableMarker
+                                key={idx}
+                                icon={getIcon(p)}
+                                point={p}
+                                onMarkerUpdate={onMarkerUpdate}
+                            />
+                        )
+                    } else {
+                        return (
+                            <Marker
+                                icon={getIcon(p)}
+                                key={idx}
+                                opacity={detectEqual(p) ? 1 : 0.7}
+                                position={[p['latitude'], p['longitude']]}
+                            />
+                        )
+                    }
                 }
             })
         }

@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import {useEffect, useState} from "react";
 import {Input, Select, Table, Tag} from "antd";
-import {addQueryParam, removeQueryParam} from "@/utils/queryModifiers";
 import qs from 'query-string';
 
 import style from "./photos.module.scss";

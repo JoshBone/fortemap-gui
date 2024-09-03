@@ -1,13 +1,13 @@
 import style from "./InfoPanel.module.scss"
-import {Col, Row, Image, Button, Radio, Space} from "antd";
+import {Col, Row, Image, Button, Radio, Space, message} from "antd";
 import React, {useState} from "react";
 import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
 import {useRouter} from "next/router";
 
 import {HiOutlineArrowLeft} from 'react-icons/hi'
 
-const InfoPanel = ({photoData, onLocationSelect}) => {
-    const router = useRouter()
+const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditClose}) => {
+    const [messageApi, contextHolder] = message.useMessage();
     const [photoStatus, setPhotoStatus] = useState('ELL_VAR')
 
     const previewURL = `https://fortepan.download/file/fortepan-eu/1600/fortepan_${photoData['fortepan_id']}.jpg`
@@ -24,8 +24,18 @@ const InfoPanel = ({photoData, onLocationSelect}) => {
         return txt
     }
 
+    const handleStatusChange = (value) => {
+        setPhotoStatus(value)
+
+        messageApi.open({
+            type: 'success',
+            content: 'Státusz sikeresen megváltoztatva!',
+        });
+    }
+
     return (
         <div className={style.InfoPanelWrapper}>
+            {contextHolder}
             <Row>
                 <Col span={12}>
                     <div className={style.Image}>
@@ -54,7 +64,7 @@ const InfoPanel = ({photoData, onLocationSelect}) => {
                         <Radio.Group
                             buttonStyle={'outline'}
                             value={photoStatus}
-                            onChange={(e) => setPhotoStatus(e.target.value)}
+                            onChange={(e) => handleStatusChange(e.target.value)}
                             className={style.StatusButtons}
                         >
                             <Space direction="vertical">
@@ -71,7 +81,12 @@ const InfoPanel = ({photoData, onLocationSelect}) => {
                 </Col>
             </Row>
             <Row>
-                <LocationsPanel locationsData={photoData['locations']} onRowClick={onLocationSelect} />
+                <LocationsPanel
+                    locationsData={photoData['locations']}
+                    onRowClick={onLocationSelect}
+                    onLocationEdit={onLocationEdit}
+                    onLocationEditClose={onLocationEditClose}
+                />
             </Row>
         </div>
     )
