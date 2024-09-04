@@ -38,7 +38,7 @@ export default function Photos() {
         });
         setFilters(parsedFilters);
 
-        fetchData({
+        router.isReady && fetchData({
             search: query.search,
             pagination: {
                 current: parseInt(query.page || 1),
