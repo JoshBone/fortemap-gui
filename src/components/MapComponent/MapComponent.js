@@ -2,6 +2,7 @@ import {MapContainer, Marker, Popup, TileLayer, useMap} from "react-leaflet";
 import style from "./MapComponent.module.scss";
 import {useEffect, useMemo, useRef, useState} from "react";
 import DraggableMarker from "@/components/MapComponent/DraggableMarker";
+import {message} from "antd";
 
 const ChangeView = ({ center, zoom }) => {
     const map = useMap();
@@ -11,7 +12,7 @@ const ChangeView = ({ center, zoom }) => {
 
 const MapComponent = ({photoData, selectedLocation, editing}) => {
     const [position, setPosition] = useState([47.4983, 19.0408])
-
+    const [messageApi, contextHolder] = message.useMessage();
     const [locations, setLocations] = useState(photoData['locations'])
 
     const redIcon = new L.Icon({
@@ -62,11 +63,13 @@ const MapComponent = ({photoData, selectedLocation, editing}) => {
     }
 
     const onMarkerUpdate = (id, points) => {
-
+        messageApi.open({
+            type: 'success',
+            content: 'Az új lokáció sikeresen elmentve!',
+        });
     }
 
     const renderMarkers = () => {
-        const {locations} = photoData;
         if (locations) {
             return locations.map((p, idx) => {
                 if (p['latitude'] && p['longitude']) {
@@ -96,6 +99,7 @@ const MapComponent = ({photoData, selectedLocation, editing}) => {
 
     return (
         <div className={style.MapWrapper}>
+            {contextHolder}
             <MapContainer
                 className={style.MapContainer}
                 center={position}
