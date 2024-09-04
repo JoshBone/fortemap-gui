@@ -3,6 +3,7 @@ import style from "./LocationsPanel.module.scss";
 import { HiOutlineDocumentText, HiPlus, HiOutlineLocationMarker, HiOutlineTrash } from "react-icons/hi";
 import {useState} from "react";
 import {ReactOsmGeocoding} from "@paraboly/react-osm-geocoding";
+import LocationForm from "@/components/LocationsPanel/LocationForm";
 
 const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEditClose}) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -155,7 +156,10 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
                     </Button>
                 ]}
             >
-                <ReactOsmGeocoding  callback={data => console.log(data)}/>
+                <LocationForm
+                    action={action}
+                    record={selectedRecord}
+                />
             </Modal>
         </div>
     )
