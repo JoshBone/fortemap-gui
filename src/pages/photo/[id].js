@@ -30,7 +30,6 @@ export async function getServerSideProps(context) {
 
 export default function PhotoPage({data}) {
     const [selectedLocation, setSelectedLocation] = useState({latitude: null, longitude: null})
-
     const [editing, setEditing] = useState(false)
 
     const handleLocationSelect = (location) => {
@@ -45,7 +44,7 @@ export default function PhotoPage({data}) {
     const handleLocationEditClose = () => {
         setEditing(false)
     }
-    
+
     return (
         <React.Fragment>
             <Head>

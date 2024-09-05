@@ -1,7 +1,7 @@
 import {Marker} from "react-leaflet";
 import {useMemo, useRef, useState} from "react";
 
-const DraggableMarker = ({key, icon, point, onMarkerUpdate}) => {
+const DraggableMarker = ({markerKey, icon, point, onMarkerUpdate}) => {
     const markerRef = useRef(null)
 
     const [position, setPosition] = useState([point['latitude'], point['longitude']])
@@ -22,7 +22,7 @@ const DraggableMarker = ({key, icon, point, onMarkerUpdate}) => {
     return (
         <Marker
             icon={icon}
-            key={key}
+            key={markerKey}
             ref={markerRef}
             eventHandlers={eventHandlers}
             draggable={true}

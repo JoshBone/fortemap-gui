@@ -2,13 +2,15 @@ import style from "./InfoPanel.module.scss"
 import {Col, Row, Image, Button, Radio, Space, message} from "antd";
 import React, {useState} from "react";
 import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
-import {useRouter} from "next/router";
 
 import {HiOutlineArrowLeft} from 'react-icons/hi'
+import axios from "axios";
+
+const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditClose}) => {
     const [messageApi, contextHolder] = message.useMessage();
-    const [photoStatus, setPhotoStatus] = useState('ELL_VAR')
+    const [photoStatus, setPhotoStatus] = useState(photoData.status)
 
     const previewURL = `https://fortepan.download/file/fortepan-eu/1600/fortepan_${photoData['fortepan_id']}.jpg`
     const url = `https://fortepan.download/file/fortepan-eu/480/fortepan_${photoData['fortepan_id']}.jpg`
@@ -27,10 +29,14 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
     const handleStatusChange = (value) => {
         setPhotoStatus(value)
 
-        messageApi.open({
-            type: 'success',
-            content: 'Státusz sikeresen megváltoztatva!',
-        });
+        axios.patch(`${FORTEPAN_API}/photos/${photoData.fortepan_id}/`, {
+            status: value
+        }).then(response => {
+            messageApi.open({
+                type: 'success',
+                content: 'Státusz sikeresen megváltoztatva!',
+            });
+        }).catch(error => console.error(error));
     }
 
     return (

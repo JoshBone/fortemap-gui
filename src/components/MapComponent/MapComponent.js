@@ -3,6 +3,9 @@ import style from "./MapComponent.module.scss";
 import {useEffect, useMemo, useRef, useState} from "react";
 import DraggableMarker from "@/components/MapComponent/DraggableMarker";
 import {message} from "antd";
+import axios from "axios";
+
+const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const ChangeView = ({ center, zoom }) => {
     const map = useMap();
@@ -59,14 +62,33 @@ const MapComponent = ({photoData, selectedLocation, editing}) => {
     }
 
     const detectEqual = (p) => {
-        return (p['latitude'] === selectedLocation['latitude'] && p['longitude'] === selectedLocation['longitude'])
+        return (p['id'] === selectedLocation['id'])
     }
 
     const onMarkerUpdate = (id, points) => {
-        messageApi.open({
-            type: 'success',
-            content: 'Az új lokáció sikeresen elmentve!',
-        });
+        const data = {
+            latitude: points.lat,
+            longitude: points.lng
+        }
+
+        axios.patch(`${FORTEPAN_API}/photos/locations/${id}/`, data).then(response => {
+            setLocations(locations.map(loc => {
+                if (loc['id'] === id) {
+                    return {
+                        ... loc,
+                        latitude: points.lat,
+                        longitude: points.lng
+                    }
+                } else {
+                    return loc
+                }
+            }))
+
+            messageApi.open({
+                type: 'success',
+                content: 'Az új lokáció sikeresen elmentve!',
+            });
+        }).catch(error => console.error(error));
     }
 
     const renderMarkers = () => {
@@ -77,6 +99,7 @@ const MapComponent = ({photoData, selectedLocation, editing}) => {
                         return (
                             <DraggableMarker
                                 key={idx}
+                                markerKey={idx}
                                 icon={getIcon(p)}
                                 point={p}
                                 onMarkerUpdate={onMarkerUpdate}
@@ -98,7 +121,7 @@ const MapComponent = ({photoData, selectedLocation, editing}) => {
     }
 
     return (
-        <div className={style.MapWrapper}>
+        <div className={editing ? `${style.MapWrapper} ${style.Editing}`: style.MapWrapper}>
             {contextHolder}
             <MapContainer
                 className={style.MapContainer}

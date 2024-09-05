@@ -2,13 +2,14 @@ import {Button, message, notification, Modal, Popconfirm, Table, Tooltip, Space}
 import style from "./LocationsPanel.module.scss";
 import { HiOutlineDocumentText, HiPlus, HiOutlineLocationMarker, HiOutlineTrash } from "react-icons/hi";
 import {useState} from "react";
-import {ReactOsmGeocoding} from "@paraboly/react-osm-geocoding";
 import LocationForm from "@/components/LocationsPanel/LocationForm";
 
 const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEditClose}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState({});
     const [action, setAction] = useState()
+
+    const [locations, setLocations] = useState(locationsData)
 
     const [mapPointEditing, setMapPointEditing] = useState(undefined)
 
@@ -133,7 +134,7 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
             <Table
                 rowKey={'id'}
                 columns={columns}
-                dataSource={locationsData}
+                dataSource={locations}
                 bordered
                 pagination={false}
                 footer={renderFooter}
