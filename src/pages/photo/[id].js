@@ -32,6 +32,8 @@ export default function PhotoPage({data}) {
     const [selectedLocation, setSelectedLocation] = useState({latitude: null, longitude: null})
     const [editing, setEditing] = useState(false)
 
+    const [photoData, setPhotoData] = useState(data)
+
     const handleLocationSelect = (location) => {
         setSelectedLocation(location)
     }
@@ -48,12 +50,12 @@ export default function PhotoPage({data}) {
     return (
         <React.Fragment>
             <Head>
-                <title>Fortemap Geotagger - Photo ID: {data['fortepan_id']}</title>
+                <title>Fortemap Geotagger - Photo ID: {photoData['fortepan_id']}</title>
             </Head>
             <Row>
                 <Col span={14}>
                     <InfoPanel
-                        photoData={data}
+                        photoData={photoData}
                         onLocationSelect={handleLocationSelect}
                         onLocationEdit={handleLocationEdit}
                         onLocationEditClose={handleLocationEditClose}
@@ -61,10 +63,11 @@ export default function PhotoPage({data}) {
                 </Col>
                 <Col span={10}>
                     <MapComponent
-                        photoData={data}
+                        photoData={photoData}
                         selectedLocation={selectedLocation}
                         editing={editing}
-                    /></Col>
+                    />
+                </Col>
             </Row>
         </React.Fragment>
     )
