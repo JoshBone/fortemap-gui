@@ -1,5 +1,5 @@
 import style from "./InfoPanel.module.scss"
-import {Col, Row, Image, Button, Radio, Space, message} from "antd";
+import {Col, Row, Image, Button, Radio, Space, message, Input} from "antd";
 import React, {useState} from "react";
 import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
 
@@ -8,9 +8,12 @@ import axios from "axios";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
+const { TextArea } = Input;
+
 const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditClose}) => {
     const [messageApi, contextHolder] = message.useMessage();
     const [photoStatus, setPhotoStatus] = useState(photoData.status)
+    const [commentValue, setCommentValue] = useState(photoData.comment)
 
     const previewURL = `https://fortepan.download/file/fortepan-eu/1600/fortepan_${photoData['fortepan_id']}.jpg`
     const url = `https://fortepan.download/file/fortepan-eu/480/fortepan_${photoData['fortepan_id']}.jpg`
@@ -39,6 +42,17 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
         }).catch(error => console.error(error));
     }
 
+    const handleCommentSave = () => {
+        axios.patch(`${FORTEPAN_API}/photos/${photoData.fortepan_id}/`, {
+            comment: commentValue
+        }).then(response => {
+            messageApi.open({
+                type: 'success',
+                content: 'Megjegyzés sikeresen elmentve!',
+            });
+        }).catch(error => console.error(error));
+    }
+
     return (
         <div className={style.InfoPanelWrapper}>
             {contextHolder}
@@ -57,12 +71,20 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                 <Col span={12}>
                     <div className={style.PhotoMeta}>
                         <div className={style.Label}>Leírás (felismert helységnevek):</div>
-                        <div className={style.NER} dangerouslySetInnerHTML={{__html: encodeNER(photoData['description_geocoded'])}}></div>
+                        <div className={style.NER}
+                             dangerouslySetInnerHTML={{__html: encodeNER(photoData['description_geocoded'])}}></div>
                     </div>
                     <div className={style.PhotoMeta}>
                         <div className={style.Label}>Fortepan URL:</div>
                         <div className={style.Link}>
-                            <a href={`https://fortepan.hu/hu/photos/?id=${photoData['fortepan_id']}`} target={'_new'}>Fénykép megtekintése</a>
+                            <a href={`https://fortepan.hu/hu/photos/?id=${photoData['fortepan_id']}`} target={'_new'}>Fénykép
+                                megtekintése</a>
+                        </div>
+                    </div>
+                    <div className={style.PhotoMeta}>
+                        <div className={style.Label}>Szerkesztő:</div>
+                        <div className={style.NER}>
+                            {photoData['editor'] ? photoData['editor'] : 'Nincs megadva'}
                         </div>
                     </div>
                     <div className={style.PhotoMeta}>
@@ -93,6 +115,23 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                     onLocationEdit={onLocationEdit}
                     onLocationEditClose={onLocationEditClose}
                 />
+            </Row>
+            <br/>
+            <Row>
+                <Col span={24}>
+                    <div className={style.Label}>Megjegyzés:</div>
+                    <TextArea
+                        showCount
+                        maxLength={1000}
+                        className={style.Comment}
+                        value={commentValue}
+                        rows={4}
+                        onChange={(e) => setCommentValue(e.target.value)}
+                    />
+                    <div className={style.CommentSaveButton}>
+                        <Button onClick={handleCommentSave}>Hozzászólás mentése</Button>
+                    </div>
+                </Col>
             </Row>
         </div>
     )

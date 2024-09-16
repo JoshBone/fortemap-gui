@@ -1,6 +1,6 @@
 .InfoPanelWrapper {
   padding: 10px;
-  overflow: auto;
+  overflow: hidden;
 
   .Image {
     display: flex;
@@ -16,13 +16,22 @@
     gap: 10px;
   }
 
+  .Label {
+    font-weight: 800;
+  }
+
+  .Comment {
+    margin-top: 10px;
+    margin-bottom: 30px;
+  }
+
+  .CommentSaveButton {
+    text-align: right;
+  }
+
   .PhotoMeta {
     padding: 15px 15px 5px 15px;
     line-height: 140%;
-
-    .Label {
-      font-weight: 800;
-    }
 
     .NER {
       flex: 1;
