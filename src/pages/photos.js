@@ -26,6 +26,7 @@ export default function Photos() {
         place: query.filter_place,
         status: query.filter_status,
         geocodes: query.filter_locations_count,
+        editor: query.filter_editor,
     });
     const [search, setSearch] = useState(query.search);
 
@@ -148,6 +149,11 @@ export default function Photos() {
             width: 150,
             render: renderStatus
         },
+        {
+            title: 'Szerkesztő',
+            dataIndex: 'editor',
+            width: 150
+        },
     ];
 
     const renderTableHeader = () => {
@@ -198,6 +204,21 @@ export default function Photos() {
                         // onChange={(e) => {setFilters({...filters, geocodes: e.target.value})}}
                         style={{width: '200px'}}
                         onSearch={(value) => onFilterChange('locations_count', value)}
+                    />
+                    <Select
+                        showSearch
+                        allowClear
+                        placeholder="- Szerkesztő -"
+                        optionFilterProp="label"
+                        value={filters['editor']}
+                        onChange={(value) => onFilterChange('editor', value)}
+                        style={{width: '230px'}}
+                        options={[
+                            { label: 'Ellenőrzésre vár', value: 'ELL_VAR' },
+                            { label: 'Elhelyezésre vár', value: 'ELH_VAR' },
+                            { label: 'Elhelyezve', value: 'OK' },
+                            { label: 'Nincs koordináta', value: 'NK' },
+                        ]}
                     />
                 </div>
             </div>
