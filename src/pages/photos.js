@@ -30,6 +30,16 @@ export default function Photos() {
     });
     const [search, setSearch] = useState(query.search);
 
+    const [editorOptions, setEditorOptions] = useState([]);
+
+    useEffect(() => {
+        fetch(`${FORTEPAN_API}/photos/select/editors`)
+            .then(r => r.json())
+            .then(data => {
+                setEditorOptions(data.map((editor) => ({ label: editor[0], value: editor[0] })))
+            });
+    }, [])
+
     useEffect(() => {
         const parsedFilters = {};
         Object.keys(query).forEach((key) => {
@@ -213,12 +223,7 @@ export default function Photos() {
                         value={filters['editor']}
                         onChange={(value) => onFilterChange('editor', value)}
                         style={{width: '230px'}}
-                        options={[
-                            { label: 'Ellenőrzésre vár', value: 'ELL_VAR' },
-                            { label: 'Elhelyezésre vár', value: 'ELH_VAR' },
-                            { label: 'Elhelyezve', value: 'OK' },
-                            { label: 'Nincs koordináta', value: 'NK' },
-                        ]}
+                        options={editorOptions}
                     />
                 </div>
             </div>
