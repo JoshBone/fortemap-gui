@@ -1,8 +1,11 @@
-import {Button, message, notification, Modal, Popconfirm, Table, Tooltip, Space} from "antd";
+import {Button, notification, message, Modal, Popconfirm, Table, Tooltip, Space} from "antd";
 import style from "./LocationsPanel.module.scss";
 import { HiOutlineDocumentText, HiPlus, HiOutlineLocationMarker, HiOutlineTrash } from "react-icons/hi";
 import {useState} from "react";
 import LocationForm from "@/components/LocationsPanel/LocationForm";
+import axios from "axios";
+
+const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEditClose}) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -12,19 +15,31 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
     const [locations, setLocations] = useState(locationsData)
 
     const [mapPointEditing, setMapPointEditing] = useState(undefined)
+    const [messageApi, messageContextHolder] = message.useMessage();
 
     const [api, contextHolder] = notification.useNotification();
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-    const confirm = (e) => {
-        message.success('Lokáció sikeresen törölve!');
+    const confirm = (id) => {
+        axios.delete(`${FORTEPAN_API}/photos/locations/${id}/`).then(response => {
+            setLocations(locations.filter(loc => loc.id !== id))
+            messageApi.open({
+                type: 'success',
+                content: 'Lokáció sikeresen törölve!',
+            });
+        }).catch(error => console.error(error));
     };
 
     const handleEditClick = (record) => {
         setAction('edit');
         setSelectedRowKeys([record.id]);
         setSelectedRecord(record);
+        setModalOpen(true);
+    }
+
+    const handleAddClick = () => {
+        setAction('create');
         setModalOpen(true);
     }
 
@@ -74,7 +89,7 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
                     <Popconfirm
                         title="Cím törlése"
                         description="Biztos, hogy törölni akarod ezt a címet?"
-                        onConfirm={confirm}
+                        onConfirm={() => confirm(record.id)}
                         okText="Igen"
                         cancelText="Nem"
                     >
@@ -104,7 +119,7 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
     const renderFooter = () => {
         return (
             <div>
-                <Button icon={<HiPlus/>}>
+                <Button icon={<HiPlus/>} onClick={handleAddClick}>
                     Új cím hozzáadása
                 </Button>
             </div>
@@ -130,6 +145,7 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
     return (
         <div className={style.LocationsWrapper}>
             {contextHolder}
+            {messageContextHolder}
             <div className={style.Label}>Lokációk:</div>
             <Table
                 rowKey={'id'}
@@ -148,6 +164,8 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
                 title={action === 'edit' ? 'Cím módosítása' : 'Új cím hozzáadása'}
                 open={modalOpen}
                 onCancel={handleCancel}
+                destroyOnClose={true}
+                width={'60%'}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
                         Bezárás
