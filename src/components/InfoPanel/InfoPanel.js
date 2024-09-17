@@ -110,6 +110,7 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
             </Row>
             <Row>
                 <LocationsPanel
+                    photoID={photoData['id']}
                     locationsData={photoData['locations']}
                     onRowClick={onLocationSelect}
                     onLocationEdit={onLocationEdit}

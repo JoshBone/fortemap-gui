@@ -4,10 +4,11 @@ import { HiOutlineDocumentText, HiPlus, HiOutlineLocationMarker, HiOutlineTrash 
 import {useState} from "react";
 import LocationForm from "@/components/LocationsPanel/LocationForm";
 import axios from "axios";
+import {useRouter} from "next/navigation";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
-const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEditClose}) => {
+const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onLocationEditClose}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState({});
     const [action, setAction] = useState()
@@ -22,6 +23,8 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const [buttonLoading, setButtonLoading] = useState(false)
+
+    const router = useRouter()
 
     const confirm = (id) => {
         axios.delete(`${FORTEPAN_API}/photos/locations/${id}/`).then(response => {
@@ -143,12 +146,45 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
     const handleOk = (searchBoxValue, selectedLocation) => {
         setButtonLoading(true)
         const data = {
+            photo: photoID,
             original_address: searchBoxValue,
             geocoded_address: selectedLocation.display_name,
             latitude: selectedLocation.lat,
             longitude: selectedLocation.lon,
             geotag_provider: 'Nominatim'
         }
+
+        switch (action) {
+            case 'edit':
+                axios.put(`${FORTEPAN_API}/photos/locations/${selectedRowKeys[0]}/`, data)
+                    .then(response => {
+                        messageApi.open({
+                            type: 'success',
+                            content: 'Lokáció sikeresen módosítva!',
+                        });
+                    })
+                    .then(data => {
+                        setButtonLoading(false)
+                        setModalOpen(false);
+                        router.refresh()
+                    })
+                break;
+            case 'create':
+                axios.post(`${FORTEPAN_API}/photos/locations/create/`, data)
+                    .then(response => {
+                        messageApi.open({
+                            type: 'success',
+                            content: 'Lokáció sikeresen hozzáadva!',
+                        });
+                    })
+                    .then(data => {
+                        setButtonLoading(false)
+                        setModalOpen(false);
+                        router.refresh()
+                    })
+                break;
+        }
+
         setButtonLoading(false)
         setModalOpen(false);
     }
