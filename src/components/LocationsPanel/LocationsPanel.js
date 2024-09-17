@@ -33,7 +33,9 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
                 type: 'success',
                 content: 'Lokáció sikeresen törölve!',
             });
-        }).catch(error => console.error(error));
+        })
+        .then(data => router.refresh())
+        .catch(error => console.error(error));
     };
 
     const handleEditClick = (record) => {
@@ -162,10 +164,10 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
                             type: 'success',
                             content: 'Lokáció sikeresen módosítva!',
                         });
-                    })
-                    .then(data => {
                         setButtonLoading(false)
                         setModalOpen(false);
+                    })
+                    .then(data => {
                         router.refresh()
                     })
                 break;
@@ -176,12 +178,11 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
                             type: 'success',
                             content: 'Lokáció sikeresen hozzáadva!',
                         });
-                    })
-                    .then(data => {
+                        setLocations([...locations, response.data])
                         setButtonLoading(false)
                         setModalOpen(false);
-                        router.refresh()
                     })
+                    .then(data => router.refresh())
                 break;
         }
 
