@@ -13,10 +13,10 @@ const ChangeView = ({ center, zoom }) => {
     return null;
 }
 
-const MapComponent = ({photoData, selectedLocation, editing}) => {
+const MapComponent = ({photoData, selectedLocation, editing, height, type = 'page'}) => {
     const [position, setPosition] = useState([47.4983, 19.0408])
     const [messageApi, contextHolder] = message.useMessage();
-    const [locations, setLocations] = useState(photoData['locations'])
+    const [locations, setLocations] = useState(type === 'page' ? photoData['locations'] : photoData)
 
     const redIcon = new L.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -127,6 +127,7 @@ const MapComponent = ({photoData, selectedLocation, editing}) => {
                 className={style.MapContainer}
                 center={position}
                 zoom={14}
+                style={{height: height ? height : undefined}}
                 scrollWheelZoom={true}
             >
                 <ChangeView center={position} />

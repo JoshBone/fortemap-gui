@@ -1,0 +1,18 @@
+.MapWrapper {
+  position: sticky;
+  top: 50px;
+  z-index: 9;
+
+  .MapContainer {
+    height: calc(100vh - 50px);
+
+    :global .leaflet-popup-content {
+      font-size: 16px;
+    }
+  }
+}
+
+.Editing {
+  border: 5px solid red;
+}
+

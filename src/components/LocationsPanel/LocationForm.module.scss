@@ -1,0 +1,20 @@
+.ResultsWrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+
+  .Table {
+    flex: 1;
+  }
+
+  .Map {
+    flex: 1;
+  }
+}
+
+.Buttons {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px
+}

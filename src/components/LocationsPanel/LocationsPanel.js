@@ -21,6 +21,8 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
+    const [buttonLoading, setButtonLoading] = useState(false)
+
     const confirm = (id) => {
         axios.delete(`${FORTEPAN_API}/photos/locations/${id}/`).then(response => {
             setLocations(locations.filter(loc => loc.id !== id))
@@ -138,8 +140,17 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
         setModalOpen(false);
     }
 
-    const handleOk = () => {
-        setModalOpen(false)
+    const handleOk = (searchBoxValue, selectedLocation) => {
+        setButtonLoading(true)
+        const data = {
+            original_address: searchBoxValue,
+            geocoded_address: selectedLocation.display_name,
+            latitude: selectedLocation.lat,
+            longitude: selectedLocation.lon,
+            geotag_provider: 'Nominatim'
+        }
+        setButtonLoading(false)
+        setModalOpen(false);
     }
 
     return (
@@ -166,18 +177,14 @@ const LocationsPanel = ({locationsData, onRowClick, onLocationEdit, onLocationEd
                 onCancel={handleCancel}
                 destroyOnClose={true}
                 width={'60%'}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Bezárás
-                    </Button>,
-                    <Button key="submit" type="primary" onClick={handleOk}>
-                        Mentés
-                    </Button>
-                ]}
+                footer={[]}
             >
                 <LocationForm
+                    buttonLoading={buttonLoading}
                     action={action}
                     record={selectedRecord}
+                    onClose={handleCancel}
+                    onSave={handleOk}
                 />
             </Modal>
         </div>
