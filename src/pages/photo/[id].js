@@ -47,6 +47,14 @@ export default function PhotoPage({data}) {
         setEditing(false)
     }
 
+    const onMarkerUpdate = (points) => {
+        setSelectedLocation({
+            ...selectedLocation,
+            latitude: points.lat,
+            longitude: points.lng
+        })
+    }
+
     return (
         <React.Fragment>
             <Head>
@@ -63,6 +71,7 @@ export default function PhotoPage({data}) {
                 </Col>
                 <Col span={10}>
                     <MapComponent
+                        onPointsUpdate={onMarkerUpdate}
                         photoData={photoData}
                         selectedLocation={selectedLocation}
                         editing={editing}

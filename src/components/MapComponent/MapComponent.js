@@ -13,7 +13,7 @@ const ChangeView = ({ center, zoom }) => {
     return null;
 }
 
-const MapComponent = ({photoData, selectedLocation, editing, height, type = 'page'}) => {
+const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, height, type = 'page'}) => {
     const [position, setPosition] = useState([47.4983, 19.0408])
     const [messageApi, contextHolder] = message.useMessage();
     const [locations, setLocations] = useState(type === 'page' ? photoData['locations'] : photoData)
@@ -83,6 +83,8 @@ const MapComponent = ({photoData, selectedLocation, editing, height, type = 'pag
                     return loc
                 }
             }))
+
+            onPointsUpdate(points)
 
             messageApi.open({
                 type: 'success',
