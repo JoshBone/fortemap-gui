@@ -45,6 +45,8 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
         }
     };
 
+    console.log(selectedLocation)
+
     return (
         <>
             <Row>
@@ -103,7 +105,7 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
                             type="primary"
                             loading={buttonLoading}
                             onClick={() => onSave(input, selectedLocation)}
-                            disabled={selectedLocation['lat'] === null}>
+                            disabled={Object.keys(selectedLocation).length === 0 || selectedLocation['lat'] === null}>
                             Mentés
                         </Button>
                     </div>
