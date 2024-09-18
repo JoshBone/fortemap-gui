@@ -13,7 +13,7 @@ export default function Start() {
                 <h3>Fényképek települések szerint</h3>
                 <ul>
                     <li><a href={'/fortemap/photos?filter_place=Győr'}>Fényképek Győrből</a></li>
-                    <li><a href={'/fortemap/photos?filter_place=Budapest'}>Fényképek Budapestről</a></li>
+                    <li><a href={'/fortemap/photos?filter_place=Budapest V.'}>Fényképek Budapestről</a></li>
                 </ul>
                 <h3>A beazonosított térképpontok szerint</h3>
                 <ul>

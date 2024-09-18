@@ -31,12 +31,19 @@ export default function Photos() {
     const [search, setSearch] = useState(query.search);
 
     const [editorOptions, setEditorOptions] = useState([]);
+    const [placeOptions, setPlaceOptions] = useState([]);
 
     useEffect(() => {
         fetch(`${FORTEPAN_API}/photos/select/editors`)
             .then(r => r.json())
             .then(data => {
                 setEditorOptions(data.map((editor) => ({ label: editor[0], value: editor[0] })))
+            });
+
+        fetch(`${FORTEPAN_API}/photos/select/places`)
+            .then(r => r.json())
+            .then(data => {
+                setPlaceOptions(data.map((place) => ({ label: place[0], value: place[0] })))
             });
     }, [])
 
@@ -202,10 +209,7 @@ export default function Photos() {
                         value={filters['place']}
                         onChange={(value) => onFilterChange('place', value)}
                         style={{width: '250px'}}
-                        options={[
-                            { label: 'Budapest', value: 'Budapest' },
-                            { label: 'Győr', value: 'Győr' },
-                        ]}
+                        options={placeOptions}
                     />
                     <Search
                         allowClear={true}
