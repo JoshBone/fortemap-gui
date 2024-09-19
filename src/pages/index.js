@@ -19,6 +19,12 @@ export default function Start() {
                 <ul>
                     <li><a href={'/fortemap/photos?filter_locations_count=0'}>Geolokáció nélküli fényképek</a></li>
                 </ul>
+                <h3>Felhasználói kézikönyv</h3>
+                <ul>
+                    <li>
+                        <a href={'https://docs.google.com/document/d/1UOBgILDzzj75jG8QGO3YqyflI8CZ0BJFlrCorYH8oOQ/edit?usp=sharing'}>Kézikönyv megnyitása</a>
+                    </li>
+                </ul>
             </div>
         </>
     );
