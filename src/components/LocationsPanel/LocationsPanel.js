@@ -1,4 +1,4 @@
-import {Button, notification, message, Modal, Popconfirm, Table, Tooltip, Space} from "antd";
+import {Button, notification, message, Modal, Popconfirm, Table, Tooltip, Space, Checkbox} from "antd";
 import style from "./LocationsPanel.module.scss";
 import { HiOutlineDocumentText, HiPlus, HiOutlineLocationMarker, HiOutlineTrash } from "react-icons/hi";
 import {useState} from "react";
@@ -107,6 +107,37 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
         )
     }
 
+    const renderShootingLocation = (text, record, index) => {
+        const handleCheckboxChange = (value) => {
+            axios.patch(`${FORTEPAN_API}/photos/locations/${record.id}/`, {
+                shooting_location: value
+            }).then(response => {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Státusz sikeresen megváltoztatva!',
+                });
+
+                setLocations(locations.map(loc => {
+                    if (loc.id === record.id) {
+                        return {
+                            ...loc,
+                            shooting_location: value
+                        }
+                    }
+                    return loc
+                }))
+            })}
+
+        return (
+            <div className={style.Actions}>
+                <Checkbox
+                    onChange={() => handleCheckboxChange(!record.shooting_location)}
+                    checked={record.shooting_location}
+                />
+            </div>
+        )
+    }
+
     const columns = [
         {
             title: 'Eredeti cím',
@@ -115,6 +146,11 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
         {
             title: 'Geokódolt cím',
             dataIndex: 'geocoded_address',
+        },
+        {
+            title: 'Fényképezés helye',
+            dataIndex: 'shooting_location',
+            render: renderShootingLocation
         },
         {
             title: 'Akció',
