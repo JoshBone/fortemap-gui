@@ -46,7 +46,8 @@ const nextConfig = {
   output: 'standalone',
   assetPrefix: isProd ? 'https://fmt.nektonik.com/fortemap' : '',
   experimental: {
-    esmExternals: "loose"
+    esmExternals: "loose",
+    scrollRestoration: true
   },
   basePath: '/fortemap'
 };

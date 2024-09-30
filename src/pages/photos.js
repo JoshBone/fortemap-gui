@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Input, Select, Table, Tag} from "antd";
 import qs from 'query-string';
 
 import style from "./photos.module.scss";
 import Head from "next/head";
+import {useLocalStorage} from "react-use";
+import scrollIntoView from 'scroll-into-view';
 
 const { Search } = Input;
 
@@ -16,6 +18,8 @@ export default function Photos() {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [scrollElementID, setScrollElementID] = useLocalStorage('table-scroll-id', 0);
 
     const [pagination, setPagination] = useState({
         current: parseInt(query.page),
@@ -65,6 +69,16 @@ export default function Photos() {
             filters: parsedFilters,
         });
     }, [query]);
+
+    useEffect(() => {
+        if (data.length > 0) {
+            scrollIntoView(document.querySelector('.scroll-row'), {
+                align: {
+                    top: 0,
+                },
+            });
+        }
+    }, [data])
 
     const fetchData = async (params = {}) => {
         setLoading(true);
@@ -316,9 +330,11 @@ export default function Photos() {
                   pagination={pagination}
                   title={renderTableHeader}
                   bordered
+                  rowClassName={(record, index) => (record['fortepan_id'] === scrollElementID ? 'scroll-row' : '')}
                   onRow={(record, rowIndex) => {
                       return {
                           onClick: (event) => {
+                              setScrollElementID(record['fortepan_id'])
                               router.push(`/photo/${record['fortepan_id']}`)
                           } // click row
                       };
