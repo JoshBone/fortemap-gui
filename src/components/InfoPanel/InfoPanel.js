@@ -3,8 +3,9 @@ import {Col, Row, Image, Button, Radio, Space, message, Input} from "antd";
 import React, {useState} from "react";
 import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
 
-import {HiOutlineArrowLeft} from 'react-icons/hi'
+import {HiOutlineArrowLeft, HiOutlineArrowRight} from 'react-icons/hi'
 import axios from "axios";
+import Link from "next/link";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -105,6 +106,12 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                     </div>
                     <div className={style.Buttons} style={{paddingTop: '25px'}}>
                         <Button onClick={() => history.back()}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
+                        {
+                            photoData['next_photo_id'] &&
+                            <Link href={`/photo/${photoData['fortepan_id']}`}>
+                                <Button>Következő kép <HiOutlineArrowRight/></Button>
+                            </Link>
+                        }
                     </div>
                 </Col>
             </Row>
