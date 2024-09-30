@@ -65,10 +65,20 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
         return (p['id'] === selectedLocation['id'])
     }
 
-    const onMarkerUpdate = (id, points) => {
+    const onMarkerUpdate = (id, points, oldLocationData) => {
+        const getNewAddress = () =>  {
+            if (oldLocationData['geocoded_address'].indexOf('[Módosítva]') >= 0) {
+                return oldLocationData['geocoded_address']
+            } else {
+                return `[Módosítva] ${oldLocationData['geocoded_address']}`
+            }
+        }
+
         const data = {
             latitude: points.lat,
-            longitude: points.lng
+            longitude: points.lng,
+            geocoded_address: getNewAddress(),
+            geotag_provider: 'GUI'
         }
 
         axios.patch(`${FORTEPAN_API}/photos/locations/${id}/`, data).then(response => {
@@ -77,14 +87,14 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
                     return {
                         ... loc,
                         latitude: points.lat,
-                        longitude: points.lng
+                        longitude: points.lng,
                     }
                 } else {
                     return loc
                 }
             }))
 
-            onPointsUpdate(points)
+            onPointsUpdate(points, id, getNewAddress())
 
             messageApi.open({
                 type: 'success',

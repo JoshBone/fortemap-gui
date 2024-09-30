@@ -12,7 +12,7 @@ const DraggableMarker = ({markerKey, icon, point, onMarkerUpdate}) => {
                 const marker = markerRef.current
                 if (marker != null) {
                     setPosition(marker.getLatLng())
-                    onMarkerUpdate(point['id'], marker.getLatLng())
+                    onMarkerUpdate(point['id'], marker.getLatLng(), point)
                 }
             },
         }),

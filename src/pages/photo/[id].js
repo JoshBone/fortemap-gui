@@ -47,11 +47,23 @@ export default function PhotoPage({data}) {
         setEditing(false)
     }
 
-    const onMarkerUpdate = (points) => {
+    const onMarkerUpdate = (points, id, newAddress) => {
+        const {locations, ...pData} = photoData
+        const newLocations = locations.map(l => {
+            if (l['id'] === id) {
+                l['geocoded_address'] = newAddress
+            }
+        })
+
         setSelectedLocation({
             ...selectedLocation,
             latitude: points.lat,
             longitude: points.lng
+        })
+
+        setPhotoData({
+            ...pData,
+            locations: newLocations
         })
     }
 
