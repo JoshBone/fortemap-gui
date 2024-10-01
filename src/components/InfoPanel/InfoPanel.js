@@ -105,7 +105,12 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                         </Radio.Group>
                     </div>
                     <div className={style.Buttons} style={{paddingTop: '25px'}}>
-                        <Button onClick={() => history.back()}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
+                        <Button onClick={() => {
+                            if( photoData['original_filter_params'].length > 0 ) 
+                                window.location.href = `/fortemap/photos/${photoData['original_filter_params']}`
+                            else 
+                                history.back()
+                        }}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
                         {
                             photoData['next_photo_id'] &&
                                 <Button onClick={() => {
