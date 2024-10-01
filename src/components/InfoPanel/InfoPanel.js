@@ -108,9 +108,10 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                         <Button onClick={() => history.back()}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
                         {
                             photoData['next_photo_id'] &&
-                            <Link href={`/photo/${photoData['fortepan_id']}`}>
-                                <Button>Következő kép <HiOutlineArrowRight/></Button>
-                            </Link>
+                                <Button onClick={() => {
+                                        window.location.href = `/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
+                                }}
+                                >{`Következő kép ${photoData['next_photo_id']}`} <HiOutlineArrowRight/></Button>
                         }
                     </div>
                 </Col>

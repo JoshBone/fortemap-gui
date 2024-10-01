@@ -13,8 +13,16 @@ const MapComponent = dynamic(
 
 export async function getServerSideProps(context) {
     const { id } = context.params;
-    const res = await fetch(`${FORTEPAN_API}/photos/${id}/`)
+    const url_params = new URLSearchParams(context.query)
+    const src_url_params = url_params.has('src_url_params') ?  url_params.get('src_url_params') : ''
+    let fetchURL = `${FORTEPAN_API}/photos/${id}/`
 
+    const photo_table_filter = src_url_params
+    
+    if ( photo_table_filter.length > 0 ) { //} && photo_table_filter.length > 0) {
+         fetchURL += `photo_table_filter=${encodeURIComponent(photo_table_filter)}`
+     }
+    const res = await fetch(fetchURL)
     if (!res.ok) {
         return {
             notFound: true

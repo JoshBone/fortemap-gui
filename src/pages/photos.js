@@ -335,7 +335,7 @@ export default function Photos() {
                       return {
                           onClick: (event) => {
                               setScrollElementID(record['fortepan_id'])
-                              router.push(`/photo/${record['fortepan_id']}`)
+                              router.push({pathname: `/photo/${record['fortepan_id']}`, query: {src_url_params: window.location.search}})
                           } // click row
                       };
                   }}
