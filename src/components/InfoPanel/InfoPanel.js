@@ -6,6 +6,7 @@ import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
 import {HiOutlineArrowLeft, HiOutlineArrowRight} from 'react-icons/hi'
 import axios from "axios";
 import Link from "next/link";
+import {useLocalStorage} from "react-use";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -15,6 +16,8 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
     const [messageApi, contextHolder] = message.useMessage();
     const [photoStatus, setPhotoStatus] = useState(photoData.status)
     const [commentValue, setCommentValue] = useState(photoData.comment)
+
+    const [scrollElementID, setScrollElementID] = useLocalStorage('table-scroll-id', 0);
 
     const previewURL = `https://fortepan.download/file/fortepan-eu/1600/fortepan_${photoData['fortepan_id']}.jpg`
     const url = `https://fortepan.download/file/fortepan-eu/480/fortepan_${photoData['fortepan_id']}.jpg`
@@ -114,6 +117,7 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                         {
                             photoData['next_photo_id'] &&
                                 <Button onClick={() => {
+                                        setScrollElementID(photoData['next_photo_id'])
                                         window.location.href = `/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
                                 }}
                                 >{`Következő kép`} <HiOutlineArrowRight/></Button>
