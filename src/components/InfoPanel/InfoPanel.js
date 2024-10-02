@@ -112,7 +112,7 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                             if( photoData['original_filter_params'].length > 0 ) 
                                 window.location.href = `/fortemap/photos/${photoData['original_filter_params']}`
                             else 
-                                history.back()
+                                window.location.href = `/fortemap/photos`
                         }}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
                         {
                             photoData['next_photo_id'] &&
