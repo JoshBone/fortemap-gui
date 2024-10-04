@@ -33,9 +33,22 @@ const LocationsMapComponent = ({locationsData, selectedLocation, height}) => {
         shadowSize: [41, 41],
     });
 
+    const calcLocationsCenter = (locations) => {
+        if (locations.length>0) {
+            const lats = locations.map(c => parseFloat(c.lat, 10));
+            const lons = locations.map(c => parseFloat(c.lon, 10));
+            const average = list => list.reduce((prev, curr) => prev + curr) / list.length;
+            const lat_avg = average(lats)
+            const lon_avg = average(lons)
+
+            return [lat_avg, lon_avg]
+        }
+        return [47.4983, 19.0408];
+    }
+
     useEffect(() => {
         if (locationsData) {
-            setPosition([47.4983, 19.0408])
+            setPosition(calcLocationsCenter(locationsData))
         }
     }, [locationsData])
 
@@ -43,7 +56,7 @@ const LocationsMapComponent = ({locationsData, selectedLocation, height}) => {
         if (Object.keys(selectedLocation).length > 0 && selectedLocation['lat'] !== null) {
             setPosition([selectedLocation['lat'], selectedLocation['lon']])
         } else {
-            setPosition([47.4983, 19.0408])
+            setPosition(calcLocationsCenter(locationsData))
         }
         // markerRef.current.openPopup()
     }, [selectedLocation])
