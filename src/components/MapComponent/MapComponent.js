@@ -37,6 +37,15 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
     });
 
     useEffect(() => {
+        if (selectedLocation['latitude'] !== null) {
+            setPosition([selectedLocation['latitude'], selectedLocation['longitude']])
+        } else {
+            setPosition([47.4983, 19.0408])
+        }
+        // markerRef.current.openPopup()
+    }, [selectedLocation])
+
+    useEffect(() => {
         if (photoData) {
             if (photoData['mapcenter_lat'] !== null) {
                 setPosition([photoData['mapcenter_lat'], photoData['mapcenter_long']])
@@ -47,15 +56,6 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
             setPosition([47.4983, 19.0408])
         }
     }, [photoData])
-
-    useEffect(() => {
-        if (selectedLocation['latitude'] !== null) {
-            setPosition([selectedLocation['latitude'], selectedLocation['longitude']])
-        } else {
-            setPosition([47.4983, 19.0408])
-        }
-        // markerRef.current.openPopup()
-    }, [selectedLocation])
 
     const getIcon = (p) => {
         return detectEqual(p) ? redIcon : greyIcon
