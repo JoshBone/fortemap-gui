@@ -25,6 +25,7 @@ export default function Photos() {
         current: parseInt(query.page),
         pageSize: parseInt(query.limit),
         total: 0,
+        showTotal: (total, range) => `Képek száma: ${total} db`
     });
     const [filters, setFilters] = useState({
         place: query.filter_place,
@@ -100,6 +101,7 @@ export default function Photos() {
             setPagination({
                 ...params.pagination,
                 total: response.count,
+                showTotal: (total, range) => `Képek száma: ${total} db`
             });
         } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -151,39 +153,54 @@ export default function Photos() {
         return <Tag color={getColor()}>{getText()}</Tag>
     }
 
+    const onColumnClick = (record, rowIndex) => {
+        return {
+            onClick: (event) => {
+                setScrollElementID(record['fortepan_id'])
+                router.push({pathname: `/photo/${record['fortepan_id']}`, query: {src_url_params: window.location.search}})
+            } // click row
+        };
+    }
+
     const columns = [
         {
             title: 'Fénykép',
             dataIndex: 'fortepan_id',
             render: photoRender,
-            width: 400
+            width: 400,
+            onCell: onColumnClick
         },
         {
             title: 'Leírás',
             dataIndex: 'description_original',
+            onCell: onColumnClick
         },
         {
             title: 'Település',
             dataIndex: 'place',
             width: 150,
+            onCell: onColumnClick
         },
         {
             title: 'Geokódok',
             dataIndex: 'locations_count',
             // sorter: true,
             render: (count) => (<div style={{textAlign: 'center'}}>{count}</div>),
-            width: 120
+            width: 120,
+            onCell: onColumnClick
         },
         {
             title: 'Státusz',
             dataIndex: 'status',
             width: 150,
-            render: renderStatus
+            render: renderStatus,
+            onCell: onColumnClick
         },
         {
             title: 'Szerkesztő',
             dataIndex: 'editor',
-            width: 150
+            width: 150,
+            onCell: onColumnClick
         },
     ];
 
@@ -316,6 +333,12 @@ export default function Photos() {
         });
     };
 
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+    };
+
     return (
         <>
             <Head>
@@ -331,14 +354,6 @@ export default function Photos() {
                   title={renderTableHeader}
                   bordered
                   rowClassName={(record, index) => (record['fortepan_id'] === scrollElementID ? 'scroll-row' : '')}
-                  onRow={(record, rowIndex) => {
-                      return {
-                          onClick: (event) => {
-                              setScrollElementID(record['fortepan_id'])
-                              router.push({pathname: `/photo/${record['fortepan_id']}`, query: {src_url_params: window.location.search}})
-                          } // click row
-                      };
-                  }}
                   scroll={{
                       y: '72vh',
                   }}
