@@ -1,12 +1,14 @@
 import { useRouter } from "next/router";
 import {useEffect, useRef, useState} from "react";
-import {Input, Select, Table, Tag} from "antd";
+import {Button, Input, message, Modal, Select, Table, Tag} from "antd";
 import qs from 'query-string';
 
 import style from "./photos.module.scss";
 import Head from "next/head";
 import {useLocalStorage} from "react-use";
 import scrollIntoView from 'scroll-into-view';
+import LocationForm from "@/components/LocationsPanel/LocationForm";
+import axios from "axios";
 
 const { Search } = Input;
 
@@ -16,10 +18,16 @@ export default function Photos() {
     const router = useRouter();
     const { query } = router;
 
+    const [messageApi, contextHolder] = message.useMessage();
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const [scrollElementID, setScrollElementID] = useLocalStorage('table-scroll-id', 0);
+
+    const [selectedRows, setSelectedRows] = useState([])
+    const [modalOpen, setModalOpen] = useState(false)
+    const [batchCreateLoading, setBatchCreateLoading] = useState(false)
 
     const [pagination, setPagination] = useState({
         current: parseInt(query.page),
@@ -329,15 +337,73 @@ export default function Photos() {
         fetchData({
             pagination,
             filters,
-            search: search,
+            search,
         });
     };
 
     const rowSelection = {
+        preserveSelectedRowKeys: true,
+        selectedRowKeys: selectedRows,
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            setSelectedRows(selectedRowKeys);
         },
     };
+
+    const renderFooter = (currentRecord) => {
+        return (
+            <Button
+                onClick={() => setModalOpen(true)}
+                disabled={selectedRows.length < 1}
+            >
+                Lokáció hozzáadása {selectedRows.length > 0 ? `${selectedRows.length} fényképhez` : undefined}
+            </Button>
+        )
+    }
+
+    const handleCancel = () => {
+        setModalOpen(false)
+    }
+
+    const handleOk = (locationInput, locationIdentified) => {
+        setBatchCreateLoading(true)
+
+        const data = {
+            photos: selectedRows,
+            location: {
+                original_address: locationInput,
+                geocoded_address: locationIdentified.display_name,
+                latitude: locationIdentified.lat,
+                longitude: locationIdentified.lon,
+                geotag_provider: 'Nominatim'
+            }
+        }
+
+        // Post the data
+        axios.post(`${FORTEPAN_API}/photos/locations/batch-create/`, data)
+            .then(response => {
+                // Refresh Table
+                fetchData({
+                    pagination,
+                    filters,
+                    search
+                }).then(response => {
+                    setSelectedRows([])
+                    setModalOpen(false)
+                    setBatchCreateLoading(false)
+                    messageApi.open({
+                        type: 'success',
+                        content: 'Új lokáció sikeresn hozzáadva a fényképekhez!',
+                    });
+                })
+            })
+            .catch(error => {
+                setBatchCreateLoading(false)
+                messageApi.open({
+                    type: 'error',
+                    content: 'Hiba a lokáció hozzáadva közben!',
+                });
+            })
+    }
 
     return (
         <>
@@ -345,6 +411,7 @@ export default function Photos() {
                 <title>Fortemap Geotagger - Fényképek listája</title>
             </Head>
           <div style={{padding: '10px'}}>
+              {contextHolder}
               <Table
                   rowKey={'fortepan_id'}
                   columns={columns}
@@ -353,15 +420,34 @@ export default function Photos() {
                   pagination={pagination}
                   title={renderTableHeader}
                   bordered
+                  footer={renderFooter}
                   rowClassName={(record, index) => (record['fortepan_id'] === scrollElementID ? 'scroll-row' : '')}
+                  rowSelection={{
+                      ...rowSelection,
+                  }}
                   scroll={{
-                      y: '72vh',
+                      y: '66vh',
                   }}
                   onChange={(pagination, filterValues, sorter) =>
                       handleTableChange(pagination, filters, sorter)}
                   size="small"
               />
-          </div>
+            </div>
+            <Modal
+                title={'Új cím hozzáadása'}
+                open={modalOpen}
+                onCancel={handleCancel}
+                destroyOnClose={true}
+                width={'60%'}
+                footer={[]}
+            >
+                <LocationForm
+                    buttonLoading={batchCreateLoading}
+                    action={'add'}
+                    onClose={handleCancel}
+                    onSave={handleOk}
+                />
+            </Modal>
         </>
       );
 }
