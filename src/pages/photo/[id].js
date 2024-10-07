@@ -21,7 +21,7 @@ export async function getServerSideProps(context) {
     
     if ( photo_table_filter.length > 0 ) { //} && photo_table_filter.length > 0) {
          fetchURL += `photo_table_filter=${encodeURIComponent(photo_table_filter)}`
-     }
+    }
     const res = await fetch(fetchURL)
     if (!res.ok) {
         return {

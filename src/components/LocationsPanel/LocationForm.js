@@ -45,8 +45,6 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
         }
     };
 
-    console.log(selectedLocation)
-
     return (
         <>
             <Row>
