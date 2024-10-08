@@ -44,7 +44,7 @@ const Stats = () => {
     }, [])
 
     return (
-        <div style={{paddingTop: '20px', paddingRight: '20px'}}>
+        <div style={{padding: '20px 20px 20px 0px' }}>
             <h2>Így állunk</h2>
             <Table
                 rowKey={'editor'}
