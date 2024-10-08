@@ -36,7 +36,7 @@ const Stats = () => {
     ]
 
     useEffect(() => {
-        fetch(`${FORTEPAN_API}/photos/stats`)
+        fetch(`${FORTEPAN_API}/photos/stats/`)
             .then(r => r.json())
             .then(d => {
                 setData(d)
