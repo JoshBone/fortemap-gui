@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import {useEffect, useRef, useState} from "react";
-import {Button, Input, message, Modal, Select, Table, Tag} from "antd";
+import {Button, Dropdown, Input, message, Modal, Select, Space, Table, Tag} from "antd";
 import qs from 'query-string';
+import { DownOutlined } from '@ant-design/icons';
 
 import style from "./photos.module.scss";
 import Head from "next/head";
@@ -27,7 +28,9 @@ export default function Photos() {
 
     const [selectedRows, setSelectedRows] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
+
     const [batchCreateLoading, setBatchCreateLoading] = useState(false)
+    const [batchStatusLoading, setBatchStatusLoading] = useState(false)
 
     const [pagination, setPagination] = useState({
         current: parseInt(query.page),
@@ -349,14 +352,85 @@ export default function Photos() {
         },
     };
 
+    const statusChangeButton = () => {
+        const items = [
+            {
+                label: 'Ellenőrzésre vár',
+                key: 'ELL_VAR'
+            }, {
+                label: 'Elhelyezésre vár',
+                key: 'ELH_VAR'
+            }, {
+                label: 'Elhelyezve',
+                key: 'OK'
+            }, {
+                label: 'Nincs Koordináta',
+                key: 'NK'
+            }
+        ]
+
+        const handleMenuClick = (e) => {
+            setBatchStatusLoading(true)
+
+            const data = {
+                photos: selectedRows,
+                status: e.key
+            }
+
+            // Post the data
+            axios.post(`${FORTEPAN_API}/photos/batch-status/`, data)
+                .then(response => {
+                    // Refresh Table
+                    fetchData({
+                        pagination,
+                        filters,
+                        search
+                    }).then(response => {
+                        setSelectedRows([])
+                        setBatchStatusLoading(false)
+                        messageApi.open({
+                            type: 'success',
+                            content: 'Új státusz sikeresn beállítva a fényképekhez!',
+                        });
+                    })
+                })
+                .catch(error => {
+                    setBatchStatusLoading(false)
+                    messageApi.open({
+                        type: 'error',
+                        content: 'Hiba a státus hozzáadva közben!',
+                    });
+                })
+        }
+
+        const menuProps = {
+            items,
+            onClick: handleMenuClick,
+        };
+
+        return (
+            <Dropdown menu={menuProps}>
+                <Button disabled={selectedRows.length < 1} loading={batchStatusLoading}>
+                    <Space>
+                        Státusz módosítása
+                        <DownOutlined />
+                    </Space>
+                </Button>
+            </Dropdown>
+        )
+    }
+
     const renderFooter = (currentRecord) => {
         return (
-            <Button
-                onClick={() => setModalOpen(true)}
-                disabled={selectedRows.length < 1}
-            >
-                Lokáció hozzáadása {selectedRows.length > 0 ? `${selectedRows.length} fényképhez` : undefined}
-            </Button>
+            <div style={{display: 'flex', gap: '10px'}}>
+                <Button
+                    onClick={() => setModalOpen(true)}
+                    disabled={selectedRows.length < 1}
+                >
+                    Lokáció hozzáadása {selectedRows.length > 0 ? `${selectedRows.length} fényképhez` : undefined}
+                </Button>
+                {statusChangeButton()}
+            </div>
         )
     }
 
