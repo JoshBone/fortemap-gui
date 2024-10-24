@@ -5,22 +5,21 @@ import {useState} from "react";
 import LocationForm from "@/components/LocationsPanel/LocationForm";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import {useEditingStatus, useSelectedLocation} from "@/utils/sharedStateProviders";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
-const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onLocationEditClose}) => {
+const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedRecord, setSelectedRecord] = useState({});
     const [action, setAction] = useState()
 
     const [locations, setLocations] = useState(locationsData)
 
-    const [mapPointEditing, setMapPointEditing] = useState(undefined)
     const [messageApi, messageContextHolder] = message.useMessage();
 
-    const [api, contextHolder] = notification.useNotification();
-
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    // Editing shared state
+    const [editing, setEditing] = useEditingStatus()
+    const [selectedLocation, setSelectedLocation] = useSelectedLocation()
 
     const [buttonLoading, setButtonLoading] = useState(false)
 
@@ -40,8 +39,7 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
 
     const handleEditClick = (record) => {
         setAction('edit');
-        setSelectedRowKeys([record.id]);
-        setSelectedRecord(record);
+        setSelectedLocation(record)
         setModalOpen(true);
     }
 
@@ -51,15 +49,13 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
     }
 
     const onClose = (key) => {
-        setMapPointEditing(undefined)
-        onLocationEditClose()
-        api.destroy(key)
+        setEditing(false)
+        notificationApi.destroy(key)
     }
 
     const handleLocationEditClick = (record) => {
-        onLocationEdit(record)
-        setMapPointEditing(record.id)
-        setSelectedRowKeys([record.id]);
+        setEditing(true)
+        setSelectedLocation(record)
 
         const btn = (
             <Space>
@@ -69,7 +65,7 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
             </Space>
         );
 
-        api.open({
+        notificationApi.open({
             message: 'Jelölőpont módosítása',
             duration: 0,
             description:
@@ -88,7 +84,7 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
                 </Tooltip>
                 <Tooltip title="Jelölőpont módosítás">
                     <Button
-                        type={mapPointEditing === record.id ? 'primary' : 'default'}
+                        type={selectedLocation.id === record.id && editing ? 'primary' : 'default'}
                         size={'small'}
                         icon={<HiOutlineLocationMarker/>} onClick={() => handleLocationEditClick(record)} />
                 </Tooltip>
@@ -172,8 +168,10 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
     // rowSelection object indicates the need for row selection
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            setSelectedRowKeys([selectedRows[0].id]);
-            onRowClick(selectedRows[0])
+            setSelectedLocation(selectedRows[0])
+            if (editing) {
+                handleLocationEditClick(selectedRows[0])
+            }
         }
     };
 
@@ -181,20 +179,20 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
         setModalOpen(false);
     }
 
-    const handleOk = (searchBoxValue, selectedLocation) => {
+    const handleOk = (searchBoxValue, newLocation) => {
         setButtonLoading(true)
         const data = {
             photo: photoID,
             original_address: searchBoxValue,
-            geocoded_address: selectedLocation.display_name,
-            latitude: selectedLocation.lat,
-            longitude: selectedLocation.lon,
+            geocoded_address: newLocation.display_name,
+            latitude: newLocation.lat,
+            longitude: newLocation.lon,
             geotag_provider: 'Nominatim'
         }
 
         switch (action) {
             case 'edit':
-                axios.put(`${FORTEPAN_API}/photos/locations/${selectedRowKeys[0]}/`, data)
+                axios.put(`${FORTEPAN_API}/photos/locations/${selectedLocation.id}/`, data)
                     .then(response => {
                         messageApi.open({
                             type: 'success',
@@ -228,7 +226,6 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
 
     return (
         <div className={style.LocationsWrapper}>
-            {contextHolder}
             {messageContextHolder}
             <div className={style.Label}>Lokációk:</div>
             <Table
@@ -240,7 +237,7 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
                 footer={renderFooter}
                 rowSelection={{
                     type: 'radio',
-                    selectedRowKeys: selectedRowKeys,
+                    selectedRowKeys: selectedLocation ? [selectedLocation.id] : [],
                     ...rowSelection,
                 }}
             />
@@ -255,7 +252,7 @@ const LocationsPanel = ({locationsData, photoID, onRowClick, onLocationEdit, onL
                 <LocationForm
                     buttonLoading={buttonLoading}
                     action={action}
-                    record={selectedRecord}
+                    record={selectedLocation}
                     onClose={handleCancel}
                     onSave={handleOk}
                 />

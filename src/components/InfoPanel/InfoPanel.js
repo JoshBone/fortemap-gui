@@ -7,12 +7,13 @@ import {HiOutlineArrowLeft, HiOutlineArrowRight} from 'react-icons/hi'
 import axios from "axios";
 import Link from "next/link";
 import {useLocalStorage} from "react-use";
+import {useSelectedLocation} from "@/utils/sharedStateProviders";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const { TextArea } = Input;
 
-const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditClose}) => {
+const InfoPanel = ({photoData, notificationApi}) => {
     const [messageApi, contextHolder] = message.useMessage();
     const [photoStatus, setPhotoStatus] = useState(photoData.status)
     const [commentValue, setCommentValue] = useState(photoData.comment)
@@ -129,9 +130,7 @@ const InfoPanel = ({photoData, onLocationSelect, onLocationEdit, onLocationEditC
                 <LocationsPanel
                     photoID={photoData['id']}
                     locationsData={photoData['locations']}
-                    onRowClick={onLocationSelect}
-                    onLocationEdit={onLocationEdit}
-                    onLocationEditClose={onLocationEditClose}
+                    notificationApi={notificationApi}
                 />
             </Row>
             <br/>

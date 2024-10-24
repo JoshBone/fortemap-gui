@@ -2,8 +2,9 @@ import {MapContainer, Marker, Popup, TileLayer, useMap} from "react-leaflet";
 import style from "./MapComponent.module.scss";
 import {useEffect, useMemo, useRef, useState} from "react";
 import DraggableMarker from "@/components/MapComponent/DraggableMarker";
-import {message} from "antd";
+import {Button, message, notification, Space} from "antd";
 import axios from "axios";
+import {useEditingStatus, useSelectedLocation} from "@/utils/sharedStateProviders";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -13,10 +14,13 @@ const ChangeView = ({ center, zoom }) => {
     return null;
 }
 
-const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, height, type = 'page'}) => {
+const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type = 'page'}) => {
     const [position, setPosition] = useState([47.4983, 19.0408])
-    const [messageApi, contextHolder] = message.useMessage();
+    const [messageApi, messageContextHolder] = message.useMessage();
     const [locations, setLocations] = useState(type === 'page' ? photoData['locations'] : photoData)
+
+    const [editing, setEditing] = useEditingStatus()
+    const [selectedLocation, setSelectedLocation] = useSelectedLocation()
 
     const redIcon = new L.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -103,6 +107,34 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
         }).catch(error => console.error(error));
     }
 
+    const handleMarkerClick = (point) => {
+        setEditing(true)
+        setSelectedLocation(point)
+
+        const onClose = (key) => {
+            setEditing(false)
+            notificationApi.destroy(key)
+        }
+
+        const btn = (
+            <Space>
+                <Button type="link" size="small" onClick={() => onClose('locationEdit')}>
+                    Bezárás
+                </Button>
+            </Space>
+        );
+
+        notificationApi.open({
+            message: 'Jelölőpont módosítása',
+            duration: 0,
+            description:
+                `${point.original_address} - Mozgasd a jelölőpontot a térképen a cím módosításához!`,
+            btn,
+            key: 'locationEdit',
+            onClose: onClose,
+        });
+    }
+
     const renderMarkers = () => {
         if (locations) {
             return locations.map((p, idx) => {
@@ -122,6 +154,11 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
                             <Marker
                                 icon={getIcon(p)}
                                 key={idx}
+                                eventHandlers={{
+                                    click: () => {
+                                        handleMarkerClick(p)
+                                    },
+                                }}
                                 opacity={detectEqual(p) ? 1 : 0.7}
                                 position={[p['latitude'], p['longitude']]}
                             />
@@ -134,7 +171,7 @@ const MapComponent = ({photoData, onPointsUpdate, selectedLocation, editing, hei
 
     return (
         <div className={editing ? `${style.MapWrapper} ${style.Editing}`: style.MapWrapper}>
-            {contextHolder}
+            {messageContextHolder}
             <MapContainer
                 className={style.MapContainer}
                 center={position}

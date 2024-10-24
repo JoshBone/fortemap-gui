@@ -1,8 +1,9 @@
-import {Col, Row} from "antd";
+import {Col, notification, Row} from "antd";
 import dynamic from "next/dynamic";
 import InfoPanel from "@/components/InfoPanel/InfoPanel";
 import React, {useState} from "react";
 import Head from "next/head";
+import {useSelectedLocation} from "@/utils/sharedStateProviders";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -37,23 +38,10 @@ export async function getServerSideProps(context) {
 }
 
 export default function PhotoPage({data}) {
-    const [selectedLocation, setSelectedLocation] = useState({latitude: null, longitude: null})
-    const [editing, setEditing] = useState(false)
-
+    const [selectedLocation, setSelectedLocation] = useSelectedLocation()
     const [photoData, setPhotoData] = useState(data)
 
-    const handleLocationSelect = (location) => {
-        setSelectedLocation(location)
-    }
-
-    const handleLocationEdit = (location) => {
-        setSelectedLocation(location)
-        setEditing(true)
-    }
-
-    const handleLocationEditClose = () => {
-        setEditing(false)
-    }
+    const [notificationApi, notificationContextHolder] = notification.useNotification();
 
     const onMarkerUpdate = (points, id, newAddress) => {
         const {locations, ...pData} = photoData
@@ -81,20 +69,18 @@ export default function PhotoPage({data}) {
                 <title>Fortemap Geotagger - Photo ID: {photoData['fortepan_id']}</title>
             </Head>
             <Row>
+                {notificationContextHolder}
                 <Col span={14}>
                     <InfoPanel
+                        notificationApi={notificationApi}
                         photoData={photoData}
-                        onLocationSelect={handleLocationSelect}
-                        onLocationEdit={handleLocationEdit}
-                        onLocationEditClose={handleLocationEditClose}
                     />
                 </Col>
                 <Col span={10}>
                     <MapComponent
+                        notificationApi={notificationApi}
                         onPointsUpdate={onMarkerUpdate}
                         photoData={photoData}
-                        selectedLocation={selectedLocation}
-                        editing={editing}
                     />
                 </Col>
             </Row>
