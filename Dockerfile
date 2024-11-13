@@ -26,6 +26,9 @@ COPY jsconfig.json .
 ARG NEXT_PUBLIC_FORTEPAN_API
 ENV NEXT_PUBLIC_FORTEPAN_API=${NEXT_PUBLIC_FORTEPAN_API}
 
+ARG NEXT_PUBLIC_ROUTE_PREFIX
+ENV NEXT_PUBLIC_ROUTE_PREFIX=${NEXT_PUBLIC_ROUTE_PREFIX}
+
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
 # ENV NEXT_TELEMETRY_DISABLED 1
@@ -62,6 +65,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Environment variables must be redefined at run time
 ARG NEXT_PUBLIC_FORTEPAN_API
 ENV NEXT_PUBLIC_FORTEPAN_API=${NEXT_PUBLIC_FORTEPAN_API}
+
+ARG NEXT_PUBLIC_ROUTE_PREFIX
+ENV NEXT_PUBLIC_ROUTE_PREFIX=${NEXT_PUBLIC_ROUTE_PREFIX}
 
 # Uncomment the following line to disable telemetry at run time
 ENV NEXT_TELEMETRY_DISABLED 1
