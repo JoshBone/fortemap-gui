@@ -103,7 +103,7 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
                             type="primary"
                             loading={buttonLoading}
                             onClick={() => onSave(input, selectedLocation)}
-                            disabled={Object.keys(selectedLocation).length === 0 || selectedLocation['lat'] === null}>
+                            disabled={true}>
                             Mentés
                         </Button>
                     </div>

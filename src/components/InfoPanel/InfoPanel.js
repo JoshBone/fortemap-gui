@@ -10,6 +10,7 @@ import {useLocalStorage} from "react-use";
 import {useSelectedLocation} from "@/utils/sharedStateProviders";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
+const PREFIX = process.env.NEXT_PUBLIC_ROUTE_PREFIX;
 
 const { TextArea } = Input;
 
@@ -111,7 +112,7 @@ const InfoPanel = ({photoData, notificationApi}) => {
                     <div className={style.Buttons} style={{paddingTop: '25px'}}>
                         <Button onClick={() => {
                             if( photoData['original_filter_params'].length > 0 ) 
-                                window.location.href = `/fortemap/photos/${photoData['original_filter_params']}`
+                                window.location.href = PREFIX ? `/${PREFIX}/photos/${photoData['original_filter_params']}` : `/photos/${photoData['original_filter_params']}`
                             else 
                                 window.location.href = `/fortemap/photos`
                         }}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
@@ -119,7 +120,9 @@ const InfoPanel = ({photoData, notificationApi}) => {
                             photoData['next_photo_id'] &&
                                 <Button onClick={() => {
                                         setScrollElementID(photoData['next_photo_id'])
-                                        window.location.href = `/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
+                                        window.location.href = PREFIX ?
+                                            `/${PREFIX}/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}` :
+                                            `/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
                                 }}
                                 >{`Következő kép`} <HiOutlineArrowRight/></Button>
                         }
@@ -146,7 +149,7 @@ const InfoPanel = ({photoData, notificationApi}) => {
                         onChange={(e) => setCommentValue(e.target.value)}
                     />
                     <div className={style.CommentSaveButton}>
-                        <Button onClick={handleCommentSave}>Hozzászólás mentése</Button>
+                        <Button onClick={handleCommentSave} disabled={true}>Hozzászólás mentése</Button>
                     </div>
                 </Col>
             </Row>

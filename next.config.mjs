@@ -44,12 +44,12 @@ const nextConfig = {
     domains: ['fortepan.download']
   },
   output: 'standalone',
-  assetPrefix: isProd ? 'https://fmt.nektonik.com/fortemap' : '',
+  // assetPrefix: isProd ? 'https://fmt.nektonik.com/fortemap' : '',
   experimental: {
     esmExternals: "loose",
     scrollRestoration: true
   },
-  basePath: '/fortemap'
+  // basePath: '/fortemap'
 };
 
 export default nextConfig;

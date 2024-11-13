@@ -18,7 +18,7 @@ const AppLayout = ({ children }) => {
                     </svg>
                 </Link>
                 <Link href={'/'}>
-                    <span style={{fontWeight: 1000, color: '#333', paddingLeft: '10px'}}>FORTEMAP - GEOTAGGER</span>
+                    <span style={{fontWeight: 1000, color: '#333', paddingLeft: '10px'}}>FORTEMAP - GEOTAGGER (bemutató verzió)</span>
                 </Link>
             </div>
             <div className={`${style.Content} ${nunitoSans.className}`}>

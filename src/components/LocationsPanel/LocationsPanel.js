@@ -26,6 +26,13 @@ const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
     const router = useRouter()
 
     const confirm = (id) => {
+        setLocations(locations.filter(loc => loc.id !== id))
+        messageApi.open({
+            type: 'success',
+            content: 'Lokáció sikeresen törölve!',
+        });
+
+        /*
         axios.delete(`${FORTEPAN_API}/photos/locations/${id}/`).then(response => {
             setLocations(locations.filter(loc => loc.id !== id))
             messageApi.open({
@@ -35,6 +42,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
         })
         .then(data => router.refresh())
         .catch(error => console.error(error));
+        */
     };
 
     const handleEditClick = (record) => {

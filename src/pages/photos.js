@@ -425,11 +425,10 @@ export default function Photos() {
             <div style={{display: 'flex', gap: '10px'}}>
                 <Button
                     onClick={() => setModalOpen(true)}
-                    disabled={selectedRows.length < 1}
+                    disabled={true}
                 >
                     Lokáció hozzáadása {selectedRows.length > 0 ? `${selectedRows.length} fényképhez` : undefined}
                 </Button>
-                {statusChangeButton()}
             </div>
         )
     }
