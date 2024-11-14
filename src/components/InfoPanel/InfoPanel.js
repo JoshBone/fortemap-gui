@@ -114,7 +114,7 @@ const InfoPanel = ({photoData, notificationApi}) => {
                             if( photoData['original_filter_params'].length > 0 ) 
                                 window.location.href = PREFIX ? `/${PREFIX}/photos/${photoData['original_filter_params']}` : `/photos/${photoData['original_filter_params']}`
                             else 
-                                window.location.href = `/${PREFIX}/photos`
+                                window.location.href = PREFIX ? `/${PREFIX}/photos` : `/photos`
                         }}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
                         {
                             photoData['next_photo_id'] &&
