@@ -10,6 +10,7 @@ import {useLocalStorage} from "react-use";
 import scrollIntoView from 'scroll-into-view';
 import LocationForm from "@/components/LocationsPanel/LocationForm";
 import axios from "axios";
+import AppLayout from "@/components/Layout/AppLayout";
 
 const { Search } = Input;
 
@@ -480,7 +481,7 @@ export default function Photos() {
     }
 
     return (
-        <>
+        <AppLayout>
             <Head>
                 <title>Fortemap Geotagger - Fényképek listája</title>
             </Head>
@@ -522,6 +523,6 @@ export default function Photos() {
                     onSave={handleOk}
                 />
             </Modal>
-        </>
+        </AppLayout>
       );
 }

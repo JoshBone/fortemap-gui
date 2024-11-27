@@ -49,7 +49,7 @@ const nextConfig = {
     esmExternals: "loose",
     scrollRestoration: true
   },
-  basePath: '/fortemap'
+  basePath: isProd ? '/fortemap' : ''
 };
 
 export default nextConfig;

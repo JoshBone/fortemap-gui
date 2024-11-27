@@ -4,6 +4,7 @@ import InfoPanel from "@/components/InfoPanel/InfoPanel";
 import React, {useState} from "react";
 import Head from "next/head";
 import {useSelectedLocation} from "@/utils/sharedStateProviders";
+import AppLayout from "@/components/Layout/AppLayout";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -64,7 +65,7 @@ export default function PhotoPage({data}) {
     }
 
     return (
-        <React.Fragment>
+        <AppLayout>
             <Head>
                 <title>Fortemap Geotagger - Photo ID: {photoData['fortepan_id']}</title>
             </Head>
@@ -84,6 +85,6 @@ export default function PhotoPage({data}) {
                     />
                 </Col>
             </Row>
-        </React.Fragment>
+        </AppLayout>
     )
 }

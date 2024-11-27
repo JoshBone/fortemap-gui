@@ -1,6 +1,8 @@
 import style from "./AppLayout.module.scss"
 import {Nunito_Sans} from "next/font/google";
 import Link from "next/link";
+import {signOut} from "next-auth/react";
+import { ImExit } from "react-icons/im";
 
 const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
 
@@ -20,6 +22,11 @@ const AppLayout = ({ children }) => {
                 <Link href={'/'}>
                     <span style={{fontWeight: 1000, color: '#333', paddingLeft: '10px'}}>FORTEMAP - GEOTAGGER</span>
                 </Link>
+                <div className={style.Signout}>
+                    <div className={style.Button} onClick={() => signOut()}>
+                        Kijelentkezés <ImExit/>
+                    </div>
+                </div>
             </div>
             <div className={`${style.Content} ${nunitoSans.className}`}>
                 {children}
