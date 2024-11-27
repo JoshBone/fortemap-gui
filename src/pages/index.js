@@ -1,5 +1,8 @@
 import {Alert, Col, Row} from "antd";
 import Stats from "@/components/Stats/Stats";
+import MolIcon from "../../public/MOL_uj_eu_grey.svg"
+import React from "react";
+import Image from 'next/image';
 
 export default function Start() {
     return (
@@ -33,6 +36,13 @@ export default function Start() {
                                 megnyitása</a>
                         </li>
                     </ul>
+                    <h3>A projekt támogatója</h3>
+                    <Image
+                        width={400}
+                        priority
+                        src={MolIcon}
+                        alt="MOL"
+                    />
                 </div>
             </Col>
             <Col span={12}>
