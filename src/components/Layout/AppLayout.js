@@ -27,12 +27,14 @@ const AppLayout = ({ children }) => {
                   <div className={style.SponsorText}>
                     AZ OLDAL TÁMOGATÓJA:
                   </div>
-                  <Image
-                    height={44}
-                    priority
-                    src={MolIcon}
-                    alt="MOL"
-                  />
+                  <a href={'https://molujeuropaalapitvany.hu/'} target={'_blank'}>
+                    <Image
+                      height={44}
+                      priority
+                      src={MolIcon}
+                      alt="MOL"
+                    />
+                  </a>
                 </div>
             </div>
             <div className={`${style.Content} ${nunitoSans.className}`}>
