@@ -1,6 +1,9 @@
 import style from "./AppLayout.module.scss"
 import {Nunito_Sans} from "next/font/google";
 import Link from "next/link";
+import Image from "next/image";
+import MolIcon from "../../../public/MOL_uj_eu_grey.svg";
+import React from "react";
 
 const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
 
@@ -20,6 +23,17 @@ const AppLayout = ({ children }) => {
                 <Link href={'/'}>
                     <span style={{fontWeight: 1000, color: '#333', paddingLeft: '10px'}}>FORTEMAP - GEOTAGGER</span>
                 </Link>
+                <div className={style.Sponsor}>
+                  <div className={style.SponsorText}>
+                    AZ OLDAL TÁMOGATÓJA:
+                  </div>
+                  <Image
+                    height={44}
+                    priority
+                    src={MolIcon}
+                    alt="MOL"
+                  />
+                </div>
             </div>
             <div className={`${style.Content} ${nunitoSans.className}`}>
                 {children}
