@@ -59,13 +59,15 @@ const callbacks = {
     }
 };
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const options = {
     providers,
     callbacks,
     session: { strategy: "jwt" },
     pages: {
-        signIn: `/fortemap/auth/login`,
-        error: `/fortemap/auth/login`
+        signIn: isProd ? `https://fmt.nektonik.com/fortemap/auth/login` : '/auth/login',
+        error: isProd ? `https://fmt.nektonik.com/fortemap/auth/login` : '/auth/login',
     },
     secret: process.env.NEXT_PUBLIC_SECRET
 };
