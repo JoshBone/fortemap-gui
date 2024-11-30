@@ -34,7 +34,6 @@ const Auth = ({children}) => {
         onUnauthenticated() {
             signIn();
         },
-
     })
 
     if (status === "loading") {

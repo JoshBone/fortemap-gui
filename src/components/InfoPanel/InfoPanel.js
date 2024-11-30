@@ -13,7 +13,7 @@ const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const { TextArea } = Input;
 
-const InfoPanel = ({photoData, notificationApi}) => {
+const InfoPanel = ({photoData, notificationApi, username}) => {
     const [messageApi, contextHolder] = message.useMessage();
     const [photoStatus, setPhotoStatus] = useState(photoData.status)
     const [commentValue, setCommentValue] = useState(photoData.comment)
@@ -99,6 +99,7 @@ const InfoPanel = ({photoData, notificationApi}) => {
                             value={photoStatus}
                             onChange={(e) => handleStatusChange(e.target.value)}
                             className={style.StatusButtons}
+                            disabled={photoData.editor !== username}
                         >
                             <Space direction="vertical">
                                 <Radio value={'ELL_VAR'}>Ellenőrzésre vár</Radio>
@@ -128,6 +129,7 @@ const InfoPanel = ({photoData, notificationApi}) => {
             </Row>
             <Row>
                 <LocationsPanel
+                    canBeEdited={photoData.editor === username}
                     photoID={photoData['id']}
                     locationsData={photoData['locations']}
                     notificationApi={notificationApi}
@@ -146,7 +148,9 @@ const InfoPanel = ({photoData, notificationApi}) => {
                         onChange={(e) => setCommentValue(e.target.value)}
                     />
                     <div className={style.CommentSaveButton}>
-                        <Button onClick={handleCommentSave}>Hozzászólás mentése</Button>
+                        <Button onClick={handleCommentSave} disabled={photoData.editor !== username}>
+                            Hozzászólás mentése
+                        </Button>
                     </div>
                 </Col>
             </Row>

@@ -14,10 +14,12 @@ const ChangeView = ({ center, zoom }) => {
     return null;
 }
 
-const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type = 'page'}) => {
+const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type = 'page', username}) => {
     const [position, setPosition] = useState([47.4983, 19.0408])
     const [messageApi, messageContextHolder] = message.useMessage();
     const [locations, setLocations] = useState(type === 'page' ? photoData['locations'] : photoData)
+
+    const canBeEdited=photoData.editor === username
 
     const [editing, setEditing] = useEditingStatus()
     const [selectedLocation, setSelectedLocation] = useSelectedLocation()
@@ -108,7 +110,7 @@ const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type 
     }
 
     const handleMarkerClick = (point) => {
-        setEditing(true)
+        canBeEdited && setEditing(true)
         setSelectedLocation(point)
 
         const onClose = (key) => {
@@ -124,7 +126,7 @@ const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type 
             </Space>
         );
 
-        notificationApi.open({
+        canBeEdited && notificationApi.open({
             message: 'Jelölőpont módosítása',
             duration: 0,
             description:

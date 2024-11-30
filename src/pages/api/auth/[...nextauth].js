@@ -30,15 +30,30 @@ const providers = [
 ];
 
 const callbacks = {
-    async jwt({ token, account }) {
+    async jwt({ token, user }) {
         // Signing in
-        if (account) {
-            token.accessToken = account.access_token
+        if (user) {
+            token.accessToken = user.accessToken
         }
         return token
     },
 
     async session({ session, token, user }) {
+        const url = `${process.env.NEXT_PUBLIC_FORTEPAN_API}/auth/users/me/`
+
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    accept: '*/*',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token.accessToken}`
+                }
+            });
+            session.username = response.data.username;
+        } catch (error) {
+            console.log(error)
+        }
+
         session.accessToken = token.accessToken;
         return session
     }

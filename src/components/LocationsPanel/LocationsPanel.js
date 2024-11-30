@@ -9,7 +9,7 @@ import {useEditingStatus, useSelectedLocation} from "@/utils/sharedStateProvider
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
-const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
+const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [action, setAction] = useState()
 
@@ -80,13 +80,21 @@ const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
         return (
             <div className={style.Actions}>
                 <Tooltip title="Cím módosítás">
-                    <Button size={'small'} icon={<HiOutlineDocumentText />} onClick={() => handleEditClick(record)} />
+                    <Button
+                        size={'small'}
+                        icon={<HiOutlineDocumentText />}
+                        onClick={() => handleEditClick(record)}
+                        disabled={!canBeEdited}
+                    />
                 </Tooltip>
                 <Tooltip title="Jelölőpont módosítás">
                     <Button
                         type={selectedLocation.id === record.id && editing ? 'primary' : 'default'}
                         size={'small'}
-                        icon={<HiOutlineLocationMarker/>} onClick={() => handleLocationEditClick(record)} />
+                        icon={<HiOutlineLocationMarker/>}
+                        onClick={() => handleLocationEditClick(record)}
+                        disabled={!canBeEdited}
+                    />
                 </Tooltip>
                 <Tooltip title="Törlés">
                     <Popconfirm
@@ -96,7 +104,11 @@ const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
                         okText="Igen"
                         cancelText="Nem"
                     >
-                        <Button size={'small'} icon={<HiOutlineTrash/>} />
+                        <Button
+                            size={'small'}
+                            icon={<HiOutlineTrash/>}
+                            disabled={!canBeEdited}
+                        />
                     </Popconfirm>
                 </Tooltip>
             </div>
@@ -127,6 +139,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
         return (
             <div className={style.Actions}>
                 <Checkbox
+                    disabled={!canBeEdited}
                     onChange={() => handleCheckboxChange(!record.shooting_location)}
                     checked={record.shooting_location}
                 />
@@ -158,7 +171,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi}) => {
     const renderFooter = () => {
         return (
             <div>
-                <Button icon={<HiPlus/>} onClick={handleAddClick}>
+                <Button icon={<HiPlus/>} onClick={handleAddClick} disabled={!canBeEdited}>
                     Új cím hozzáadása
                 </Button>
             </div>

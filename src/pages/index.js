@@ -1,19 +1,23 @@
 import {Col, Row} from "antd";
 import Stats from "@/components/Stats/Stats";
 import AppLayout from "@/components/Layout/AppLayout";
+import {useSession} from "next-auth/react";
 
 const prefix = process.env.NEXT_PUBLIC_ROUTE_PREFIX
 
 export default function Start() {
+    const {data, status} = useSession()
+
     return (
         <AppLayout>
             <Row style={{fontFamily: 'unset'}}>
                 <Col style={{fontFamily: 'unset'}} span={12}>
                     <div style={{padding: '20px'}}>
                         <h2>Üdvözöl a Fortemap Geotagger!</h2>
-                        <p>Ide jön majd statisztika, miből mennyi van, de egyelőre ugorjunk oda, hogy:</p>
                         <ul>
-                            <li><a href={prefix ? `${prefix}/photos` : `/photos`}>Az összes fénykép</a></li>
+                            <li><a href={prefix ? `${prefix}/photos?filter_editor=${data.username}` : `/photos?filter_editor=${data.username}`}>A saját fényképeim</a></li>
+                            <li><a href={prefix ? `${prefix}/photos` : `/photos`}>Az összes
+                                fénykép</a></li>
                         </ul>
                         <h3>Fényképek települések szerint</h3>
                         <ul>

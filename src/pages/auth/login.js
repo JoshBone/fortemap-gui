@@ -1,8 +1,9 @@
 import {Layout, Form, Input, Button, Typography, Alert} from 'antd';
 import Image from 'next/image';
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {signIn} from "next-auth/react";
 import {useRouter} from "next/router";
+import {useSessionStorage} from "react-use";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -11,9 +12,19 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const [loginError, setLoginError] = useState('')
     const router = useRouter();
+    const [background, setBackground] = useSessionStorage('bg-image', '');
+
+    const images = [
+        212507, 170609, 65926, 216041, 287607, 99235, 170808, 89844, 15966, 269207, 253840
+    ]
+
+    useEffect(() => {
+        if (background === '') {
+            setBackground(images[Math.floor(Math.random()*images.length)])
+        }
+    }, []);
 
     const onFinish = async(values) => {
-        console.log(values)
         setLoading(true);
         const response = await signIn('credentials',
             {
@@ -43,17 +54,13 @@ const LoginPage = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const images = [
-        212507, 170609, 65926, 216041, 287607, 99235, 170808, 89844, 15966, 269207, 253840
-    ]
-
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Content style={{ display: 'flex' }}>
                 {/* Left Column: Full-Width Image */}
                 <div style={{ flex: 1, position: 'relative' }}>
                     <Image
-                        src={`https://fortepan.download/file/fortepan-eu/1600/fortepan_${images[Math.floor(Math.random()*images.length)]}.jpg`}
+                        src={`https://fortepan.download/file/fortepan-eu/1600/fortepan_${background}.jpg`}
                         alt="Login Image"
                         fill={true}
                         priority={true}

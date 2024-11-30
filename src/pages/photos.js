@@ -11,18 +11,21 @@ import scrollIntoView from 'scroll-into-view';
 import LocationForm from "@/components/LocationsPanel/LocationForm";
 import axios from "axios";
 import AppLayout from "@/components/Layout/AppLayout";
+import {useSession} from "next-auth/react";
 
 const { Search } = Input;
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 export default function Photos() {
+    const {data, status} = useSession()
+
     const router = useRouter();
     const { query } = router;
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const [data, setData] = useState([]);
+    const [tableData, setTableData] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const [scrollElementID, setScrollElementID] = useLocalStorage('table-scroll-id', 0);
@@ -84,14 +87,14 @@ export default function Photos() {
     }, [query]);
 
     useEffect(() => {
-        if (data.length > 0) {
+        if (tableData.length > 0) {
             scrollIntoView(document.querySelector('.scroll-row'), {
                 align: {
                     top: 0,
                 },
             });
         }
-    }, [data])
+    }, [tableData])
 
     const fetchData = async (params = {}) => {
         setLoading(true);
@@ -109,7 +112,7 @@ export default function Photos() {
 
             const response = await fetch(`${FORTEPAN_API}/photos/?${queryString}`).then(r => r.json());
 
-            setData(response.results);
+            setTableData(response.results);
             setPagination({
                 ...params.pagination,
                 total: response.count,
@@ -351,6 +354,9 @@ export default function Photos() {
         onChange: (selectedRowKeys, selectedRows) => {
             setSelectedRows(selectedRowKeys);
         },
+        getCheckboxProps: (record) => ({
+            disabled: record.editor !== data.username
+        })
     };
 
     const statusChangeButton = () => {
@@ -490,7 +496,7 @@ export default function Photos() {
               <Table
                   rowKey={'fortepan_id'}
                   columns={columns}
-                  dataSource={data}
+                  dataSource={tableData}
                   loading={loading}
                   pagination={pagination}
                   title={renderTableHeader}

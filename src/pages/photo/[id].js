@@ -5,6 +5,7 @@ import React, {useState} from "react";
 import Head from "next/head";
 import {useSelectedLocation} from "@/utils/sharedStateProviders";
 import AppLayout from "@/components/Layout/AppLayout";
+import {useSession} from "next-auth/react";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -34,13 +35,14 @@ export async function getServerSideProps(context) {
     const data = await res.json()
 
     return { props: {
-        data
+        photoServerData: data
     }}
 }
 
-export default function PhotoPage({data}) {
+export default function PhotoPage({photoServerData}) {
     const [selectedLocation, setSelectedLocation] = useSelectedLocation()
-    const [photoData, setPhotoData] = useState(data)
+    const [photoData, setPhotoData] = useState(photoServerData)
+    const {data, status} = useSession()
 
     const [notificationApi, notificationContextHolder] = notification.useNotification();
 
@@ -73,12 +75,14 @@ export default function PhotoPage({data}) {
                 {notificationContextHolder}
                 <Col span={14}>
                     <InfoPanel
+                        username={data.username}
                         notificationApi={notificationApi}
                         photoData={photoData}
                     />
                 </Col>
                 <Col span={10}>
                     <MapComponent
+                        username={data.username}
                         notificationApi={notificationApi}
                         onPointsUpdate={onMarkerUpdate}
                         photoData={photoData}

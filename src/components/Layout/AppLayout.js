@@ -1,12 +1,14 @@
 import style from "./AppLayout.module.scss"
 import {Nunito_Sans} from "next/font/google";
 import Link from "next/link";
-import {signOut} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import { ImExit } from "react-icons/im";
 
 const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
 
 const AppLayout = ({ children }) => {
+    const {data, status} = useSession()
+
     return (
         <div className={style.LayoutWrapper}>
             <div className={`${style.Header} ${nunitoSans.className}`}>
@@ -24,7 +26,7 @@ const AppLayout = ({ children }) => {
                 </Link>
                 <div className={style.Signout}>
                     <div className={style.Button} onClick={() => signOut()}>
-                        Kijelentkezés <ImExit/>
+                        Kijelentkezés ({data.username ? data.username : ''}) <ImExit/>
                     </div>
                 </div>
             </div>
