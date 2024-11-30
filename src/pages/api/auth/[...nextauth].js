@@ -64,8 +64,8 @@ const options = {
     callbacks,
     session: { strategy: "jwt" },
     pages: {
-        signIn: `/auth/login`,
-        error: `/auth/login`
+        signIn: `/fortemap/auth/login`,
+        error: `/fortemap/auth/login`
     }
 };
 
