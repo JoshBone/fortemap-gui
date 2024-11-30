@@ -98,7 +98,7 @@ const LoginPage = () => {
                             </div>
                             {/* Title */}
                             <Title level={3} style={{marginBottom: '24px'}}>
-                                FORTEMAP geotagger
+                                FORTEMAP Geotagger
                             </Title>
 
                             {
