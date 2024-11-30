@@ -2,6 +2,8 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios'
 
+const prefix = process.env.NEXT_PUBLIC_ROUTE_PREFIX
+
 const providers = [
     CredentialsProvider({
         name: 'Credentials',
@@ -59,15 +61,13 @@ const callbacks = {
     }
 };
 
-const isProd = process.env.NODE_ENV === 'production'
-
 const options = {
     providers,
     callbacks,
     session: { strategy: "jwt" },
     pages: {
-        signIn: isProd ? `/auth/login` : '/auth/login',
-        error: isProd ? `/auth/login` : '/auth/login',
+        signIn: prefix ? `/fortemap/auth/login` : '/auth/login',
+        error: prefix ? `/fortemap/auth/login` : '/auth/login',
     },
     secret: process.env.NEXT_PUBLIC_SECRET
 };
