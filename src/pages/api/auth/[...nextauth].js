@@ -66,8 +66,8 @@ const options = {
     callbacks,
     session: { strategy: "jwt" },
     pages: {
-        signIn: isProd ? `https://fmt.nektonik.com/fortemap/auth/login` : '/auth/login',
-        error: isProd ? `https://fmt.nektonik.com/fortemap/auth/login` : '/auth/login',
+        signIn: isProd ? `/auth/login` : '/auth/login',
+        error: isProd ? `/auth/login` : '/auth/login',
     },
     secret: process.env.NEXT_PUBLIC_SECRET
 };
