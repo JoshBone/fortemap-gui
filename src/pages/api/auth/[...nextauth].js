@@ -66,7 +66,8 @@ const options = {
     pages: {
         signIn: `/fortemap/auth/login`,
         error: `/fortemap/auth/login`
-    }
+    },
+    secret: process.env.NEXT_PUBLIC_SECRET
 };
 
 export default NextAuth(options)
