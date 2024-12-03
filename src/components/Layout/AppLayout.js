@@ -2,7 +2,7 @@ import style from "./AppLayout.module.scss"
 import {Nunito_Sans} from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
-import MolIcon from "../../../public/MOL_uj_eu_grey.svg";
+import MolIcon from "../../../public/MUEA_logo_white.png";
 import React from "react";
 
 const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
@@ -27,7 +27,7 @@ const AppLayout = ({ children }) => {
                   <div className={style.SponsorText}>
                     AZ OLDAL TÁMOGATÓJA:
                   </div>
-                  <a href={'https://molujeuropaalapitvany.hu/'} target={'_blank'}>
+                  <a href={'https://molujeuropaalapitvany.hu/'} target={'_blank'} style={{display: 'flex'}}>
                     <Image
                       height={44}
                       priority
