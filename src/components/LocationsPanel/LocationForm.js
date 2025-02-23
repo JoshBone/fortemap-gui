@@ -1,6 +1,6 @@
 import {Button, Col, Input, Row, Space, Table} from "antd";
 import { HiOutlineLocationMarker } from "react-icons/hi";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import style from './LocationForm.module.scss'
 import dynamic from "next/dynamic";
 
@@ -14,11 +14,19 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
     const [data, setData] = useState({})
     const [loading, setLoading] = useState(false)
 
+    const inputRef = useRef(null);
+
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState({
         lat: null,
         lon: null
     })
+
+    useEffect(() => {
+        inputRef.current.focus({
+            cursor: 'end',
+        });
+    }, [])
 
     const getData = async () => {
         setLoading(true)
@@ -55,6 +63,7 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
                           value={input}
                           onChange={(e) => setInput(e.target.value)}
                           onPressEnter={getData}
+                          ref={inputRef}
                        />
                        <Button
                            icon={<HiOutlineLocationMarker />}
