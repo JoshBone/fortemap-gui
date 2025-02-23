@@ -53,6 +53,11 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
         }
     };
 
+    const selectRow = (record) => {
+        setSelectedRowKeys([record.place_id])
+        setSelectedLocation(record)
+    };
+
     return (
         <>
             <Row>
@@ -90,6 +95,11 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
                                 selectedRowKeys: selectedRowKeys,
                                 ...rowSelection,
                             }}
+                            onRow={(record) => ({
+                                onClick: () => {
+                                    selectRow(record);
+                                }
+                            })}
                         />
                     </div>
                     <div className={style.Map}>

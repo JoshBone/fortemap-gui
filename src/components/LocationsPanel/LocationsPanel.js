@@ -188,6 +188,10 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
         }
     };
 
+    const selectRow = (record) => {
+        setSelectedLocation(record)
+    };
+
     const handleCancel = () => {
         setModalOpen(false);
     }
@@ -248,6 +252,11 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                 bordered
                 pagination={false}
                 footer={renderFooter}
+                onRow={(record) => ({
+                    onClick: () => {
+                        selectRow(record);
+                    }
+                })}
                 rowSelection={{
                     type: 'radio',
                     selectedRowKeys: selectedLocation ? [selectedLocation.id] : [],
