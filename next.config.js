@@ -1,6 +1,7 @@
+const nextTranslate = require('next-translate-plugin')
 const isProd = process.env.NODE_ENV === 'production'
 
-const nextConfig = {
+module.exports = nextTranslate({
   reactStrictMode: true,
   transpilePackages: [
     // antd & deps
@@ -50,6 +51,4 @@ const nextConfig = {
     scrollRestoration: true
   },
   basePath: isProd ? '/fortemap' : ''
-};
-
-export default nextConfig;
+})

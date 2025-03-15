@@ -12,6 +12,7 @@ import LocationForm from "@/components/LocationsPanel/LocationForm";
 import axios from "axios";
 import AppLayout from "@/components/Layout/AppLayout";
 import {useSession} from "next-auth/react";
+import useTranslation from "next-translate/useTranslation";
 
 const { Search } = Input;
 
@@ -36,11 +37,13 @@ export default function Photos() {
     const [batchCreateLoading, setBatchCreateLoading] = useState(false)
     const [batchStatusLoading, setBatchStatusLoading] = useState(false)
 
+    const { t, lang } = useTranslation('index')
+
     const [pagination, setPagination] = useState({
         current: parseInt(query.page),
         pageSize: parseInt(query.limit),
         total: 0,
-        showTotal: (total, range) => `Képek száma: ${total} db`
+        showTotal: (total, range) => `${t('photos__number_of_photos')} ${total} ${t('photos__number_of_photos_pieces')}`
     });
     const [filters, setFilters] = useState({
         place: query.filter_place,
@@ -116,7 +119,7 @@ export default function Photos() {
             setPagination({
                 ...params.pagination,
                 total: response.count,
-                showTotal: (total, range) => `Képek száma: ${total} db`
+                showTotal: (total, range) => `${t('photos__number_of_photos')} ${total} ${t('photos__number_of_photos_pieces')}`
             });
         } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -155,13 +158,13 @@ export default function Photos() {
         const getText = () => {
             switch (status) {
                 case 'ELL_VAR':
-                    return 'Ellenőrzésre vár'
+                    return t("status__waiting_for_checking")
                 case 'ELH_VAR':
-                    return 'Elhelyezésre vár'
+                    return t("status__waiting_for_placement")
                 case 'OK':
-                    return 'Elhelyezve'
+                    return t("status__placed")
                 case 'NK':
-                    return 'Nincs koordináta'
+                    return t("status__no_coordinates")
             }
         }
 
@@ -179,25 +182,25 @@ export default function Photos() {
 
     const columns = [
         {
-            title: 'Fénykép',
+            title: t('photos__table_photo'),
             dataIndex: 'fortepan_id',
             render: photoRender,
             width: 400,
             onCell: onColumnClick
         },
         {
-            title: 'Leírás',
+            title: t('photos__table_description'),
             dataIndex: 'description_original',
             onCell: onColumnClick
         },
         {
-            title: 'Település',
+            title: t('photos__table_place'),
             dataIndex: 'place',
             width: 150,
             onCell: onColumnClick
         },
         {
-            title: 'Geokódok',
+            title: t('photos__table_geocodes'),
             dataIndex: 'locations_count',
             // sorter: true,
             render: (count) => (<div style={{textAlign: 'center'}}>{count}</div>),
@@ -205,14 +208,14 @@ export default function Photos() {
             onCell: onColumnClick
         },
         {
-            title: 'Státusz',
+            title: t('photos__table_status'),
             dataIndex: 'status',
             width: 150,
             render: renderStatus,
             onCell: onColumnClick
         },
         {
-            title: 'Szerkesztő',
+            title: t('photos__table_editor'),
             dataIndex: 'editor',
             width: 150,
             onCell: onColumnClick
@@ -225,7 +228,7 @@ export default function Photos() {
                 <div className={style.Search}>
                     <Search
                         allowClear={true}
-                        placeholder="Keresés..."
+                        placeholder={t('photos__filter_search')}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         onSearch={handleSearch}
@@ -235,22 +238,22 @@ export default function Photos() {
                     <Select
                         showSearch
                         allowClear
-                        placeholder="- Szűrés státusz szerint -"
+                        placeholder={t('photos__filter_status')}
                         optionFilterProp="label"
                         value={filters['status']}
                         onChange={(value) => onFilterChange('status', value)}
                         style={{width: '230px'}}
                         options={[
-                            { label: 'Ellenőrzésre vár', value: 'ELL_VAR' },
-                            { label: 'Elhelyezésre vár', value: 'ELH_VAR' },
-                            { label: 'Elhelyezve', value: 'OK' },
-                            { label: 'Nincs koordináta', value: 'NK' },
+                            { label: t("status__waiting_for_checking"), value: 'ELL_VAR' },
+                            { label: t("status__waiting_for_placement"), value: 'ELH_VAR' },
+                            { label: t("status__placed"), value: 'OK' },
+                            { label: t("status__no_coordinates"), value: 'NK' },
                         ]}
                     />
                     <Select
                         showSearch
                         allowClear
-                        placeholder="- Szűrés település szerint -"
+                        placeholder={t('photos__filter_location')}
                         optionFilterProp="label"
                         value={filters['place']}
                         onChange={(value) => onFilterChange('place', value)}
@@ -259,7 +262,7 @@ export default function Photos() {
                     />
                     <Search
                         allowClear={true}
-                        placeholder="Geokódok száma"
+                        placeholder={t('photos__filter_geocodes')}
                         value={filters['locations_count']}
                         // onChange={(e) => {setFilters({...filters, geocodes: e.target.value})}}
                         style={{width: '200px'}}
@@ -268,7 +271,7 @@ export default function Photos() {
                     <Select
                         showSearch
                         allowClear
-                        placeholder="- Szerkesztő -"
+                        placeholder={t('photos__filter_editor')}
                         optionFilterProp="label"
                         value={filters['editor']}
                         onChange={(value) => onFilterChange('editor', value)}
@@ -362,16 +365,16 @@ export default function Photos() {
     const statusChangeButton = () => {
         const items = [
             {
-                label: 'Ellenőrzésre vár',
+                label: t("status__waiting_for_checking"),
                 key: 'ELL_VAR'
             }, {
-                label: 'Elhelyezésre vár',
+                label: t("status__waiting_for_placement"),
                 key: 'ELH_VAR'
             }, {
-                label: 'Elhelyezve',
+                label: t("status__placed"),
                 key: 'OK'
             }, {
-                label: 'Nincs Koordináta',
+                label: t('status__no_coordinates'),
                 key: 'NK'
             }
         ]
@@ -397,7 +400,7 @@ export default function Photos() {
                         setBatchStatusLoading(false)
                         messageApi.open({
                             type: 'success',
-                            content: 'Új státusz sikeresn beállítva a fényképekhez!',
+                            content: t('photos__status_update_success'),
                         });
                     })
                 })
@@ -405,7 +408,7 @@ export default function Photos() {
                     setBatchStatusLoading(false)
                     messageApi.open({
                         type: 'error',
-                        content: 'Hiba a státus hozzáadva közben!',
+                        content: t('photos__status_update_error'),
                     });
                 })
         }
@@ -419,7 +422,7 @@ export default function Photos() {
             <Dropdown menu={menuProps}>
                 <Button disabled={selectedRows.length < 1} loading={batchStatusLoading}>
                     <Space>
-                        Státusz módosítása
+                        {t('photos__status_update')}
                         <DownOutlined />
                     </Space>
                 </Button>
@@ -434,7 +437,8 @@ export default function Photos() {
                     onClick={() => setModalOpen(true)}
                     disabled={selectedRows.length < 1}
                 >
-                    Lokáció hozzáadása {selectedRows.length > 0 ? `${selectedRows.length} fényképhez` : undefined}
+                    {t('photos__location_add')}
+                    {selectedRows.length > 0 ? ` ${selectedRows.length} ${t('photos__location_add_to_photo')}` : undefined}
                 </Button>
                 {statusChangeButton()}
             </div>
@@ -473,7 +477,7 @@ export default function Photos() {
                     setBatchCreateLoading(false)
                     messageApi.open({
                         type: 'success',
-                        content: 'Új lokáció sikeresn hozzáadva a fényképekhez!',
+                        content: t('photos__location_add_success'),
                     });
                 })
             })
@@ -481,7 +485,7 @@ export default function Photos() {
                 setBatchCreateLoading(false)
                 messageApi.open({
                     type: 'error',
-                    content: 'Hiba a lokáció hozzáadva közben!',
+                    content: t("photos__location_add_error"),
                 });
             })
     }
@@ -489,7 +493,7 @@ export default function Photos() {
     return (
         <AppLayout>
             <Head>
-                <title>Fortemap Geotagger - Fényképek listája</title>
+                <title>{t("photos__title")}</title>
             </Head>
           <div style={{padding: '10px'}}>
               {contextHolder}
@@ -515,7 +519,7 @@ export default function Photos() {
               />
             </div>
             <Modal
-                title={'Új cím hozzáadása'}
+                title={t("photos__location_add")}
                 open={modalOpen}
                 onCancel={handleCancel}
                 destroyOnClose={true}

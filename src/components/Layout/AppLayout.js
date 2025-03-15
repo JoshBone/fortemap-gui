@@ -3,11 +3,14 @@ import {Nunito_Sans} from "next/font/google";
 import Link from "next/link";
 import {signOut, useSession} from "next-auth/react";
 import { ImExit } from "react-icons/im";
+import LanguageSelector from "@/components/LanguageSelector/LanguageSelector";
+import useTranslation from "next-translate/useTranslation";
 
 const nunitoSans = Nunito_Sans({subsets: ["latin"], weight: ['400', '800', '1000']});
 
 const AppLayout = ({ children }) => {
     const {data, status} = useSession()
+    const { t, lang } = useTranslation('index')
 
     return (
         <div className={style.LayoutWrapper}>
@@ -26,8 +29,9 @@ const AppLayout = ({ children }) => {
                 </Link>
                 <div className={style.Signout}>
                     <div className={style.Button} onClick={() => signOut()}>
-                        Kijelentkezés ({data.username ? data.username : ''}) <ImExit/>
+                        {t('logout')} ({data.username ? data.username : ''}) <ImExit/>
                     </div>
+                    <LanguageSelector />
                 </div>
             </div>
             <div className={`${style.Content} ${nunitoSans.className}`}>

@@ -6,6 +6,7 @@ import Head from "next/head";
 import {useSelectedLocation} from "@/utils/sharedStateProviders";
 import AppLayout from "@/components/Layout/AppLayout";
 import {useSession} from "next-auth/react";
+import useTranslation from "next-translate/useTranslation";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 

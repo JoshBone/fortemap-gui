@@ -5,6 +5,7 @@ import DraggableMarker from "@/components/MapComponent/DraggableMarker";
 import {Button, message, notification, Space} from "antd";
 import axios from "axios";
 import {useEditingStatus, useSelectedLocation} from "@/utils/sharedStateProviders";
+import useTranslation from "next-translate/useTranslation";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
@@ -15,6 +16,8 @@ const ChangeView = ({ center, zoom }) => {
 }
 
 const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type = 'page', username}) => {
+    const { t, lang } = useTranslation('index')
+
     const [position, setPosition] = useState([47.4983, 19.0408])
     const [messageApi, messageContextHolder] = message.useMessage();
     const [locations, setLocations] = useState(type === 'page' ? photoData['locations'] : photoData)
@@ -76,7 +79,7 @@ const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type 
             if (oldLocationData['geocoded_address'].indexOf('[Módosítva]') >= 0) {
                 return oldLocationData['geocoded_address']
             } else {
-                return `[Módosítva] ${oldLocationData['geocoded_address']}`
+                return `[${t('photoPage__photo_modified')}] ${oldLocationData['geocoded_address']}`
             }
         }
 
@@ -104,7 +107,7 @@ const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type 
 
             messageApi.open({
                 type: 'success',
-                content: 'Az új lokáció sikeresen elmentve!',
+                content: t('photoPage__location_update_success'),
             });
         }).catch(error => console.error(error));
     }
@@ -121,7 +124,7 @@ const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type 
         const btn = (
             <Space>
                 <Button type="link" size="small" onClick={() => onClose('locationEdit')}>
-                    Bezárás
+                    {t('photoPage__close')}
                 </Button>
             </Space>
         );
@@ -130,7 +133,7 @@ const MapComponent = ({photoData, notificationApi, onPointsUpdate, height, type 
             message: 'Jelölőpont módosítása',
             duration: 0,
             description:
-                `${point.original_address} - Mozgasd a jelölőpontot a térképen a cím módosításához!`,
+                `${point.original_address} - ${t('photoPage__drag_marker')}`,
             btn,
             key: 'locationEdit',
             onClose: onClose,

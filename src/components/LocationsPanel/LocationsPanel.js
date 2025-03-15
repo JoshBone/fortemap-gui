@@ -6,10 +6,13 @@ import LocationForm from "@/components/LocationsPanel/LocationForm";
 import axios from "axios";
 import {useRouter} from "next/navigation";
 import {useEditingStatus, useSelectedLocation} from "@/utils/sharedStateProviders";
+import useTranslation from "next-translate/useTranslation";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) => {
+    const { t, lang } = useTranslation('index')
+
     const [modalOpen, setModalOpen] = useState(false);
     const [action, setAction] = useState()
 
@@ -30,7 +33,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
             setLocations(locations.filter(loc => loc.id !== id))
             messageApi.open({
                 type: 'success',
-                content: 'Lokáció sikeresen törölve!',
+                content: t('photoPage__location_deleted'),
             });
         })
         .then(data => router.refresh())
@@ -66,10 +69,10 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
         );
 
         notificationApi.open({
-            message: 'Jelölőpont módosítása',
+            message: t('photoPage__modify_marker'),
             duration: 0,
             description:
-                `${record.original_address} - Mozgasd a jelölőpontot a térképen a cím módosításához!`,
+                `${record.original_address} - ${t('photoPage__drag_marker')}`,
             btn,
             key: 'locationEdit',
             onClose: onClose,
@@ -79,7 +82,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
     const renderActions = (text, record, index) => {
         return (
             <div className={style.Actions}>
-                <Tooltip title="Cím módosítás">
+                <Tooltip title={t('photoPage__modify_address')}>
                     <Button
                         size={'small'}
                         icon={<HiOutlineDocumentText />}
@@ -87,7 +90,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                         disabled={!canBeEdited}
                     />
                 </Tooltip>
-                <Tooltip title="Jelölőpont módosítás">
+                <Tooltip title={t('photoPage__modify_marker')}>
                     <Button
                         type={selectedLocation.id === record.id && editing ? 'primary' : 'default'}
                         size={'small'}
@@ -98,8 +101,8 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                 </Tooltip>
                 <Tooltip title="Törlés">
                     <Popconfirm
-                        title="Cím törlése"
-                        description="Biztos, hogy törölni akarod ezt a címet?"
+                        title={t('photoPage__address_delete')}
+                        description={t('photoPage__address_delete_confirm')}
                         onConfirm={() => confirm(record.id)}
                         okText="Igen"
                         cancelText="Nem"
@@ -149,20 +152,20 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
 
     const columns = [
         {
-            title: 'Eredeti cím',
+            title: t('photoPage__location_table_original_address'),
             dataIndex: 'original_address',
         },
         {
-            title: 'Geokódolt cím',
+            title: t('photoPage__location_table_geocoded_address'),
             dataIndex: 'geocoded_address',
         },
         {
-            title: 'Fényképezés helye',
+            title: t('photoPage__location_table_shooting_location'),
             dataIndex: 'shooting_location',
             render: renderShootingLocation
         },
         {
-            title: 'Akció',
+            title: t('photoPage__location_table_action'),
             width: 120,
             render: renderActions
         },
@@ -172,7 +175,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
         return (
             <div>
                 <Button icon={<HiPlus/>} onClick={handleAddClick} disabled={!canBeEdited}>
-                    Új cím hozzáadása
+                    {t('photoPage__address_add')}
                 </Button>
             </div>
         )
@@ -213,7 +216,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                     .then(response => {
                         messageApi.open({
                             type: 'success',
-                            content: 'Lokáció sikeresen módosítva!',
+                            content: t('photoPage__location_update_success'),
                         });
                         setButtonLoading(false)
                         setModalOpen(false);
@@ -227,7 +230,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                     .then(response => {
                         messageApi.open({
                             type: 'success',
-                            content: 'Lokáció sikeresen hozzáadva!',
+                            content: t('photoPage__location_create_success'),
                         });
                         setLocations([...locations, response.data])
                         setButtonLoading(false)
@@ -244,7 +247,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
     return (
         <div className={style.LocationsWrapper}>
             {messageContextHolder}
-            <div className={style.Label}>Lokációk:</div>
+            <div className={style.Label}>{t('photoPage__locations')}:</div>
             <Table
                 rowKey={'id'}
                 columns={columns}
@@ -264,7 +267,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                 }}
             />
             <Modal
-                title={action === 'edit' ? 'Cím módosítása' : 'Új cím hozzáadása'}
+                title={action === 'edit' ? t('photoPage__modify_address') : t('photoPage__address_add')}
                 open={modalOpen}
                 onCancel={handleCancel}
                 destroyOnClose={true}

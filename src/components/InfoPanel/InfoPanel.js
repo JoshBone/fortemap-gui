@@ -8,12 +8,15 @@ import axios from "axios";
 import Link from "next/link";
 import {useLocalStorage} from "react-use";
 import {useSelectedLocation} from "@/utils/sharedStateProviders";
+import useTranslation from "next-translate/useTranslation";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
 
 const { TextArea } = Input;
 
 const InfoPanel = ({photoData, notificationApi, username}) => {
+    const { t, lang } = useTranslation('index')
+
     const [messageApi, contextHolder] = message.useMessage();
     const [photoStatus, setPhotoStatus] = useState(photoData.status)
     const [commentValue, setCommentValue] = useState(photoData.comment)
@@ -42,7 +45,7 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
         }).then(response => {
             messageApi.open({
                 type: 'success',
-                content: 'Státusz sikeresen megváltoztatva!',
+                content: t('photoPage__status_update_success'),
             });
         }).catch(error => console.error(error));
     }
@@ -53,7 +56,7 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
         }).then(response => {
             messageApi.open({
                 type: 'success',
-                content: 'Megjegyzés sikeresen elmentve!',
+                content: t('photoPage__comment_update_success'),
             });
         }).catch(error => console.error(error));
     }
@@ -75,25 +78,26 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                 </Col>
                 <Col span={12}>
                     <div className={style.PhotoMeta}>
-                        <div className={style.Label}>Leírás (felismert helységnevek):</div>
+                        <div className={style.Label}>{t('photoPage__recognized_places')}:</div>
                         <div className={style.NER}
                              dangerouslySetInnerHTML={{__html: encodeNER(photoData['description_geocoded'])}}></div>
                     </div>
                     <div className={style.PhotoMeta}>
                         <div className={style.Label}>Fortepan URL:</div>
                         <div className={style.Link}>
-                            <a href={`https://fortepan.hu/hu/photos/?id=${photoData['fortepan_id']}`} target={'_new'}>Fénykép
-                                megtekintése</a>
+                            <a href={`https://fortepan.hu/hu/photos/?id=${photoData['fortepan_id']}`} target={'_new'}>
+                                {t('photoPage__see_photo')}
+                            </a>
                         </div>
                     </div>
                     <div className={style.PhotoMeta}>
-                        <div className={style.Label}>Szerkesztő:</div>
+                        <div className={style.Label}>{t('photos__table_editor')}:</div>
                         <div className={style.NER}>
-                            {photoData['editor'] ? photoData['editor'] : 'Nincs megadva'}
+                            {photoData['editor'] ? photoData['editor'] : t('photos__editor_na')}
                         </div>
                     </div>
                     <div className={style.PhotoMeta}>
-                        <div className={style.Label}>Státusz:</div>
+                        <div className={style.Label}>{t('photos__table_status')}:</div>
                         <Radio.Group
                             buttonStyle={'outline'}
                             value={photoStatus}
@@ -102,10 +106,10 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                             disabled={photoData.editor !== username}
                         >
                             <Space direction="vertical">
-                                <Radio value={'ELL_VAR'}>Ellenőrzésre vár</Radio>
-                                <Radio value={'ELH_VAR'}>Elhelyezésre vár</Radio>
-                                <Radio value={'OK'}>Elhelyezve</Radio>
-                                <Radio value={'NK'}>Nincs koordináta</Radio>
+                                <Radio value={'ELL_VAR'}>{t('status__waiting_for_checking')}</Radio>
+                                <Radio value={'ELH_VAR'}>{t('status__waiting_for_placement')}</Radio>
+                                <Radio value={'OK'}>{t('status__placed')}</Radio>
+                                <Radio value={'NK'}>{t('status__no_coordinates')}</Radio>
                             </Space>
                         </Radio.Group>
                     </div>
@@ -115,14 +119,14 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                                 window.location.href = `/fortemap/photos/${photoData['original_filter_params']}`
                             else 
                                 window.location.href = `/fortemap/photos`
-                        }}><HiOutlineArrowLeft/> Vissza a fényképekhez</Button>
+                        }}><HiOutlineArrowLeft/> {t('photoPage__back_to_photos')}</Button>
                         {
                             photoData['next_photo_id'] &&
                                 <Button onClick={() => {
                                         setScrollElementID(photoData['next_photo_id'])
                                         window.location.href = `/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
                                 }}
-                                >{`Következő kép`} <HiOutlineArrowRight/></Button>
+                                >{t('photoPage__next_photo')} <HiOutlineArrowRight/></Button>
                         }
                     </div>
                 </Col>
@@ -138,7 +142,7 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
             <br/>
             <Row>
                 <Col span={24}>
-                    <div className={style.Label}>Megjegyzés:</div>
+                    <div className={style.Label}>{t('photoPage__comment')}:</div>
                     <TextArea
                         showCount
                         maxLength={1000}
@@ -149,7 +153,7 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                     />
                     <div className={style.CommentSaveButton}>
                         <Button onClick={handleCommentSave} disabled={photoData.editor !== username}>
-                            Hozzászólás mentése
+                            {t('photoPage__comment_save')}
                         </Button>
                     </div>
                 </Col>

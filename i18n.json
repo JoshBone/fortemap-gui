@@ -1,0 +1,7 @@
+{
+  "locales": ["hu", "en"],
+  "defaultLocale": "hu",
+  "pages": {
+    "*": ["index"]
+  }
+}

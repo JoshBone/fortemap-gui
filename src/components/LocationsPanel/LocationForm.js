@@ -3,6 +3,7 @@ import { HiOutlineLocationMarker } from "react-icons/hi";
 import React, {useEffect, useRef, useState} from "react";
 import style from './LocationForm.module.scss'
 import dynamic from "next/dynamic";
+import useTranslation from "next-translate/useTranslation";
 
 const LocationsMapComponent = dynamic(
     () => import('./LocationsMapComponent'),
@@ -22,6 +23,8 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
         lon: null
     })
 
+    const { t, lang } = useTranslation('index')
+
     useEffect(() => {
         inputRef.current.focus({
             cursor: 'end',
@@ -40,7 +43,7 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
 
     const columns = [
         {
-            title: 'Cím',
+            title: t('photoPage__address'),
             dataIndex: 'display_name',
         }
     ];
@@ -115,7 +118,7 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
                 <Col xs={24}>
                     <div className={style.Buttons}>
                         <Button key="back" onClick={() => onClose()}>
-                            Bezárás
+                            {t('photoPage__close')}
                         </Button>
                         <Button
                             key="submit"
