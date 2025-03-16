@@ -23,6 +23,9 @@ COPY jsconfig.json .
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
+ARG NEXT_TRANSLATE_PATH
+ENV NEXT_TRANSLATE_PATH=${NEXT_TRANSLATE_PATH}
+
 ARG NEXT_PUBLIC_FORTEPAN_API
 ENV NEXT_PUBLIC_FORTEPAN_API=${NEXT_PUBLIC_FORTEPAN_API}
 
@@ -69,6 +72,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Environment variables must be redefined at run time
+ARG NEXT_TRANSLATE_PATH
+ENV NEXT_TRANSLATE_PATH=${NEXT_TRANSLATE_PATH}
+
 ARG NEXT_PUBLIC_FORTEPAN_API
 ENV NEXT_PUBLIC_FORTEPAN_API=${NEXT_PUBLIC_FORTEPAN_API}
 
