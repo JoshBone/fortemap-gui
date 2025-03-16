@@ -20,6 +20,7 @@ COPY src ./src
 COPY public ./public
 COPY next.config.js .
 COPY jsconfig.json .
+COPY i18n.json .
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
@@ -65,6 +66,7 @@ USER nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/jsconfig.json ./
+COPY --from=builder /app/i18n.json ./
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
