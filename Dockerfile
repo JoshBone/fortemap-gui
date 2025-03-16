@@ -18,6 +18,7 @@ RUN \
 
 COPY src ./src
 COPY public ./public
+COPY locales ./locales
 COPY next.config.js .
 COPY jsconfig.json .
 COPY i18n.json .
@@ -63,6 +64,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
+COPY --from=builder /app/locales ./locales
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/jsconfig.json ./
