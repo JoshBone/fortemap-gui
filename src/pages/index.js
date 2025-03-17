@@ -17,17 +17,17 @@ export default function Start() {
                     <div style={{padding: '20px'}}>
                         <h2>{t('welcome')}</h2>
                         <ul>
-                            <li><a href={prefix ? `${lang === 'EN' ? '/en' : ''}/${prefix}/photos?filter_editor=${data.username}` : `/photos?filter_editor=${data.username}`}>{t('my-photos')}</a></li>
-                            <li><a href={prefix ? `${lang === 'EN' ? '/en' : ''}/${prefix}/photos` : `/photos`}>{t('all-photos')}</a></li>
+                            <li><a href={prefix ? `${lang === 'en' ? '/en' : ''}/${prefix}/photos?filter_editor=${data.username}` : `/photos?filter_editor=${data.username}`}>{t('my-photos')}</a></li>
+                            <li><a href={prefix ? `${lang === 'en' ? '/en' : ''}/${prefix}/photos` : `/photos`}>{t('all-photos')}</a></li>
                         </ul>
                         <h3>{t('photos-by-location')}</h3>
                         <ul>
-                            <li><a href={prefix ? `${lang === 'EN' ? '/en' : ''}/${prefix}/photos?filter_place=Győr` : `/photos?filter_place=Győr`}>{t('photos-from-gyor')}</a></li>
-                            <li><a href={prefix ? `${lang === 'EN' ? '/en' : ''}/${prefix}/photos?filter_place=Budapest V.` : `/photos?filter_place=Budapest V.`}>{t('photos-from-budapest')}</a></li>
+                            <li><a href={prefix ? `${lang === 'en' ? '/en' : ''}/${prefix}/photos?filter_place=Győr` : `/photos?filter_place=Győr`}>{t('photos-from-gyor')}</a></li>
+                            <li><a href={prefix ? `${lang === 'en' ? '/en' : ''}/${prefix}/photos?filter_place=Budapest V.` : `/photos?filter_place=Budapest V.`}>{t('photos-from-budapest')}</a></li>
                         </ul>
                         <h3>{t('photos-by-map-markers')}</h3>
                         <ul>
-                            <li><a href={prefix ? `${lang === 'EN' ? '/en' : ''}/${prefix}/photos?filter_locations_count=0` : `/photos?filter_locations_count=0`}>{t('photos-without-geo')}</a></li>
+                            <li><a href={prefix ? `${lang === 'en' ? '/en' : ''}/${prefix}/photos?filter_locations_count=0` : `/photos?filter_locations_count=0`}>{t('photos-without-geo')}</a></li>
                         </ul>
                         <h3>{t('user-manual')}</h3>
                         <ul>
