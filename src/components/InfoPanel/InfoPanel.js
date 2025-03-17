@@ -5,9 +5,7 @@ import LocationsPanel from "@/components/LocationsPanel/LocationsPanel";
 
 import {HiOutlineArrowLeft, HiOutlineArrowRight} from 'react-icons/hi'
 import axios from "axios";
-import Link from "next/link";
 import {useLocalStorage} from "react-use";
-import {useSelectedLocation} from "@/utils/sharedStateProviders";
 import useTranslation from "next-translate/useTranslation";
 
 const FORTEPAN_API = process.env.NEXT_PUBLIC_FORTEPAN_API;
@@ -118,7 +116,7 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                         <Button onClick={() => {
                             if( photoData['original_filter_params'].length > 0 ) 
                                 window.location.href = prefix ?
-                                    `/${prefix}/photos/${photoData['original_filter_params']}` :
+                                    `${lang === 'EN' ? '/en' : ''}/${prefix}/photos/${photoData['original_filter_params']}` :
                                     `/photos/${photoData['original_filter_params']}`
                             else 
                                 window.location.href = prefix ?
@@ -130,7 +128,7 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                                 <Button onClick={() => {
                                         setScrollElementID(photoData['next_photo_id'])
                                         window.location.href = prefix ?
-                                            `/${prefix}/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}` :
+                                            `${lang === 'EN' ? '/en' : ''}/${prefix}/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}` :
                                             `/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
                                 }}
                                 >{t('photoPage__next_photo')} <HiOutlineArrowRight/></Button>
