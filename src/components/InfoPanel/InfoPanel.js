@@ -116,11 +116,11 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                         <Button onClick={() => {
                             if( photoData['original_filter_params'].length > 0 ) 
                                 window.location.href = prefix ?
-                                    `${lang === 'en' ? '/en' : ''}/${prefix}/photos/${photoData['original_filter_params']}` :
+                                    `/${prefix}/${lang === 'en' ? '/en' : ''}/photos/${photoData['original_filter_params']}` :
                                     `/photos/${photoData['original_filter_params']}`
                             else 
                                 window.location.href = prefix ?
-                                    `/${prefix}/photos` :
+                                    `/${prefix}/${lang === 'en' ? '/en' : ''}/photos` :
                                     `/photos`
                         }}><HiOutlineArrowLeft/> {t('photoPage__back_to_photos')}</Button>
                         {
@@ -128,8 +128,8 @@ const InfoPanel = ({photoData, notificationApi, username}) => {
                                 <Button onClick={() => {
                                         setScrollElementID(photoData['next_photo_id'])
                                         window.location.href = prefix ?
-                                            `${lang === 'en' ? '/en' : ''}/${prefix}/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}` :
-                                            `/fortemap/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
+                                            `/${prefix}/${lang === 'en' ? '/en' : ''}/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}` :
+                                            `/photo/${photoData['next_photo_id']}?src_url_params=${encodeURIComponent(photoData['original_filter_params'])}`
                                 }}
                                 >{t('photoPage__next_photo')} <HiOutlineArrowRight/></Button>
                         }
