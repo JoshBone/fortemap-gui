@@ -126,7 +126,7 @@ const LocationForm = ({action, record, onClose, onSave, buttonLoading}) => {
                             loading={buttonLoading}
                             onClick={() => onSave(input, selectedLocation)}
                             disabled={Object.keys(selectedLocation).length === 0 || selectedLocation['lat'] === null}>
-                            Mentés
+                            {t('photoPage__save')}
                         </Button>
                     </div>
                 </Col>

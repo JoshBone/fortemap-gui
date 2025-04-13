@@ -438,7 +438,9 @@ export default function Photos() {
                     disabled={selectedRows.length < 1}
                 >
                     {t('photos__location_add')}
-                    {selectedRows.length > 0 ? ` ${selectedRows.length} ${t('photos__location_add_to_photo')}` : undefined}
+                    {selectedRows.length > 1 ?
+                        ` ${selectedRows.length} ${t('photos__location_add_to_photos')}` :
+                        ` ${selectedRows.length} ${t('photos__location_add_to_photo')}`}
                 </Button>
                 {statusChangeButton()}
             </div>

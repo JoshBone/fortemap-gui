@@ -63,7 +63,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
         const btn = (
             <Space>
                 <Button type="link" size="small" onClick={() => onClose('locationEdit')}>
-                    Bezárás
+                    {t('photoPage__close')}
                 </Button>
             </Space>
         );
@@ -99,7 +99,7 @@ const LocationsPanel = ({locationsData, photoID, notificationApi, canBeEdited}) 
                         disabled={!canBeEdited}
                     />
                 </Tooltip>
-                <Tooltip title="Törlés">
+                <Tooltip title={t("photoPage__delete_marker")}>
                     <Popconfirm
                         title={t('photoPage__address_delete')}
                         description={t('photoPage__address_delete_confirm')}
